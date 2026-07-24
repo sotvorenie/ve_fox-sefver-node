@@ -263,7 +263,7 @@ export type ChannelSectionScalarWhereWithAggregatesInput = {
 export type ChannelSectionCreateInput = {
   name: string
   createdAt?: Date | string
-  channel: Prisma.ChannelCreateNestedOneWithoutSectionInput
+  channel: Prisma.ChannelCreateNestedOneWithoutSectionsInput
   videos?: Prisma.VideoCreateNestedManyWithoutSectionInput
 }
 
@@ -278,7 +278,7 @@ export type ChannelSectionUncheckedCreateInput = {
 export type ChannelSectionUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  channel?: Prisma.ChannelUpdateOneRequiredWithoutSectionNestedInput
+  channel?: Prisma.ChannelUpdateOneRequiredWithoutSectionsNestedInput
   videos?: Prisma.VideoUpdateManyWithoutSectionNestedInput
 }
 
@@ -470,7 +470,7 @@ export type ChannelSectionScalarWhereInput = {
 export type ChannelSectionCreateWithoutVideosInput = {
   name: string
   createdAt?: Date | string
-  channel: Prisma.ChannelCreateNestedOneWithoutSectionInput
+  channel: Prisma.ChannelCreateNestedOneWithoutSectionsInput
 }
 
 export type ChannelSectionUncheckedCreateWithoutVideosInput = {
@@ -499,7 +499,7 @@ export type ChannelSectionUpdateToOneWithWhereWithoutVideosInput = {
 export type ChannelSectionUpdateWithoutVideosInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  channel?: Prisma.ChannelUpdateOneRequiredWithoutSectionNestedInput
+  channel?: Prisma.ChannelUpdateOneRequiredWithoutSectionsNestedInput
 }
 
 export type ChannelSectionUncheckedUpdateWithoutVideosInput = {

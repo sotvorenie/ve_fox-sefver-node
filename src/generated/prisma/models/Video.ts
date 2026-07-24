@@ -49,9 +49,7 @@ export type VideoSumAggregateOutputType = {
 export type VideoMinAggregateOutputType = {
   id: number | null
   name: string | null
-  path: string | null
-  videoUrl: string | null
-  date: Date | null
+  url: string | null
   duration: number | null
   viewsCount: number | null
   likesCount: number | null
@@ -66,9 +64,7 @@ export type VideoMinAggregateOutputType = {
 export type VideoMaxAggregateOutputType = {
   id: number | null
   name: string | null
-  path: string | null
-  videoUrl: string | null
-  date: Date | null
+  url: string | null
   duration: number | null
   viewsCount: number | null
   likesCount: number | null
@@ -83,9 +79,7 @@ export type VideoMaxAggregateOutputType = {
 export type VideoCountAggregateOutputType = {
   id: number
   name: number
-  path: number
-  videoUrl: number
-  date: number
+  url: number
   duration: number
   tags: number
   viewsCount: number
@@ -123,9 +117,7 @@ export type VideoSumAggregateInputType = {
 export type VideoMinAggregateInputType = {
   id?: true
   name?: true
-  path?: true
-  videoUrl?: true
-  date?: true
+  url?: true
   duration?: true
   viewsCount?: true
   likesCount?: true
@@ -140,9 +132,7 @@ export type VideoMinAggregateInputType = {
 export type VideoMaxAggregateInputType = {
   id?: true
   name?: true
-  path?: true
-  videoUrl?: true
-  date?: true
+  url?: true
   duration?: true
   viewsCount?: true
   likesCount?: true
@@ -157,9 +147,7 @@ export type VideoMaxAggregateInputType = {
 export type VideoCountAggregateInputType = {
   id?: true
   name?: true
-  path?: true
-  videoUrl?: true
-  date?: true
+  url?: true
   duration?: true
   tags?: true
   viewsCount?: true
@@ -262,9 +250,7 @@ export type VideoGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 export type VideoGroupByOutputType = {
   id: number
   name: string
-  path: string
-  videoUrl: string
-  date: Date
+  url: string
   duration: number
   tags: string[]
   viewsCount: number
@@ -303,9 +289,7 @@ export type VideoWhereInput = {
   NOT?: Prisma.VideoWhereInput | Prisma.VideoWhereInput[]
   id?: Prisma.IntFilter<"Video"> | number
   name?: Prisma.StringFilter<"Video"> | string
-  path?: Prisma.StringFilter<"Video"> | string
-  videoUrl?: Prisma.StringFilter<"Video"> | string
-  date?: Prisma.DateTimeFilter<"Video"> | Date | string
+  url?: Prisma.StringFilter<"Video"> | string
   duration?: Prisma.IntFilter<"Video"> | number
   tags?: Prisma.StringNullableListFilter<"Video">
   viewsCount?: Prisma.IntFilter<"Video"> | number
@@ -328,9 +312,7 @@ export type VideoWhereInput = {
 export type VideoOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  path?: Prisma.SortOrder
-  videoUrl?: Prisma.SortOrder
-  date?: Prisma.SortOrder
+  url?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   tags?: Prisma.SortOrder
   viewsCount?: Prisma.SortOrder
@@ -352,13 +334,11 @@ export type VideoOrderByWithRelationInput = {
 
 export type VideoWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  path?: string
-  videoUrl?: string
+  url?: string
   AND?: Prisma.VideoWhereInput | Prisma.VideoWhereInput[]
   OR?: Prisma.VideoWhereInput[]
   NOT?: Prisma.VideoWhereInput | Prisma.VideoWhereInput[]
   name?: Prisma.StringFilter<"Video"> | string
-  date?: Prisma.DateTimeFilter<"Video"> | Date | string
   duration?: Prisma.IntFilter<"Video"> | number
   tags?: Prisma.StringNullableListFilter<"Video">
   viewsCount?: Prisma.IntFilter<"Video"> | number
@@ -376,14 +356,12 @@ export type VideoWhereUniqueInput = Prisma.AtLeast<{
   history?: Prisma.HistoryListRelationFilter
   watchLater?: Prisma.WatchLaterListRelationFilter
   comments?: Prisma.CommentListRelationFilter
-}, "id" | "path" | "videoUrl">
+}, "id" | "url">
 
 export type VideoOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  path?: Prisma.SortOrder
-  videoUrl?: Prisma.SortOrder
-  date?: Prisma.SortOrder
+  url?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   tags?: Prisma.SortOrder
   viewsCount?: Prisma.SortOrder
@@ -407,9 +385,7 @@ export type VideoScalarWhereWithAggregatesInput = {
   NOT?: Prisma.VideoScalarWhereWithAggregatesInput | Prisma.VideoScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Video"> | number
   name?: Prisma.StringWithAggregatesFilter<"Video"> | string
-  path?: Prisma.StringWithAggregatesFilter<"Video"> | string
-  videoUrl?: Prisma.StringWithAggregatesFilter<"Video"> | string
-  date?: Prisma.DateTimeWithAggregatesFilter<"Video"> | Date | string
+  url?: Prisma.StringWithAggregatesFilter<"Video"> | string
   duration?: Prisma.IntWithAggregatesFilter<"Video"> | number
   tags?: Prisma.StringNullableListFilter<"Video">
   viewsCount?: Prisma.IntWithAggregatesFilter<"Video"> | number
@@ -424,9 +400,7 @@ export type VideoScalarWhereWithAggregatesInput = {
 
 export type VideoCreateInput = {
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -447,9 +421,7 @@ export type VideoCreateInput = {
 export type VideoUncheckedCreateInput = {
   id?: number
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -469,9 +441,7 @@ export type VideoUncheckedCreateInput = {
 
 export type VideoUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -492,9 +462,7 @@ export type VideoUpdateInput = {
 export type VideoUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -515,9 +483,7 @@ export type VideoUncheckedUpdateInput = {
 export type VideoCreateManyInput = {
   id?: number
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -532,9 +498,7 @@ export type VideoCreateManyInput = {
 
 export type VideoUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -548,9 +512,7 @@ export type VideoUpdateManyMutationInput = {
 export type VideoUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -576,9 +538,7 @@ export type VideoOrderByRelationAggregateInput = {
 export type VideoCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  path?: Prisma.SortOrder
-  videoUrl?: Prisma.SortOrder
-  date?: Prisma.SortOrder
+  url?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   tags?: Prisma.SortOrder
   viewsCount?: Prisma.SortOrder
@@ -604,9 +564,7 @@ export type VideoAvgOrderByAggregateInput = {
 export type VideoMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  path?: Prisma.SortOrder
-  videoUrl?: Prisma.SortOrder
-  date?: Prisma.SortOrder
+  url?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   viewsCount?: Prisma.SortOrder
   likesCount?: Prisma.SortOrder
@@ -621,9 +579,7 @@ export type VideoMaxOrderByAggregateInput = {
 export type VideoMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  path?: Prisma.SortOrder
-  videoUrl?: Prisma.SortOrder
-  date?: Prisma.SortOrder
+  url?: Prisma.SortOrder
   duration?: Prisma.SortOrder
   viewsCount?: Prisma.SortOrder
   likesCount?: Prisma.SortOrder
@@ -823,9 +779,7 @@ export type VideoUpdateOneRequiredWithoutCommentsNestedInput = {
 
 export type VideoCreateWithoutChannelInput = {
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -845,9 +799,7 @@ export type VideoCreateWithoutChannelInput = {
 export type VideoUncheckedCreateWithoutChannelInput = {
   id?: number
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -896,9 +848,7 @@ export type VideoScalarWhereInput = {
   NOT?: Prisma.VideoScalarWhereInput | Prisma.VideoScalarWhereInput[]
   id?: Prisma.IntFilter<"Video"> | number
   name?: Prisma.StringFilter<"Video"> | string
-  path?: Prisma.StringFilter<"Video"> | string
-  videoUrl?: Prisma.StringFilter<"Video"> | string
-  date?: Prisma.DateTimeFilter<"Video"> | Date | string
+  url?: Prisma.StringFilter<"Video"> | string
   duration?: Prisma.IntFilter<"Video"> | number
   tags?: Prisma.StringNullableListFilter<"Video">
   viewsCount?: Prisma.IntFilter<"Video"> | number
@@ -913,9 +863,7 @@ export type VideoScalarWhereInput = {
 
 export type VideoCreateWithoutSectionInput = {
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -935,9 +883,7 @@ export type VideoCreateWithoutSectionInput = {
 export type VideoUncheckedCreateWithoutSectionInput = {
   id?: number
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -982,9 +928,7 @@ export type VideoUpdateManyWithWhereWithoutSectionInput = {
 
 export type VideoCreateWithoutLikesInput = {
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1004,9 +948,7 @@ export type VideoCreateWithoutLikesInput = {
 export type VideoUncheckedCreateWithoutLikesInput = {
   id?: number
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1041,9 +983,7 @@ export type VideoUpdateToOneWithWhereWithoutLikesInput = {
 
 export type VideoUpdateWithoutLikesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1063,9 +1003,7 @@ export type VideoUpdateWithoutLikesInput = {
 export type VideoUncheckedUpdateWithoutLikesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1084,9 +1022,7 @@ export type VideoUncheckedUpdateWithoutLikesInput = {
 
 export type VideoCreateWithoutHistoryInput = {
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1106,9 +1042,7 @@ export type VideoCreateWithoutHistoryInput = {
 export type VideoUncheckedCreateWithoutHistoryInput = {
   id?: number
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1143,9 +1077,7 @@ export type VideoUpdateToOneWithWhereWithoutHistoryInput = {
 
 export type VideoUpdateWithoutHistoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1165,9 +1097,7 @@ export type VideoUpdateWithoutHistoryInput = {
 export type VideoUncheckedUpdateWithoutHistoryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1186,9 +1116,7 @@ export type VideoUncheckedUpdateWithoutHistoryInput = {
 
 export type VideoCreateWithoutSavedTimesInput = {
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1208,9 +1136,7 @@ export type VideoCreateWithoutSavedTimesInput = {
 export type VideoUncheckedCreateWithoutSavedTimesInput = {
   id?: number
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1245,9 +1171,7 @@ export type VideoUpdateToOneWithWhereWithoutSavedTimesInput = {
 
 export type VideoUpdateWithoutSavedTimesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1267,9 +1191,7 @@ export type VideoUpdateWithoutSavedTimesInput = {
 export type VideoUncheckedUpdateWithoutSavedTimesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1288,9 +1210,7 @@ export type VideoUncheckedUpdateWithoutSavedTimesInput = {
 
 export type VideoCreateWithoutWatchLaterInput = {
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1310,9 +1230,7 @@ export type VideoCreateWithoutWatchLaterInput = {
 export type VideoUncheckedCreateWithoutWatchLaterInput = {
   id?: number
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1347,9 +1265,7 @@ export type VideoUpdateToOneWithWhereWithoutWatchLaterInput = {
 
 export type VideoUpdateWithoutWatchLaterInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1369,9 +1285,7 @@ export type VideoUpdateWithoutWatchLaterInput = {
 export type VideoUncheckedUpdateWithoutWatchLaterInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1390,9 +1304,7 @@ export type VideoUncheckedUpdateWithoutWatchLaterInput = {
 
 export type VideoCreateWithoutCommentsInput = {
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1412,9 +1324,7 @@ export type VideoCreateWithoutCommentsInput = {
 export type VideoUncheckedCreateWithoutCommentsInput = {
   id?: number
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1449,9 +1359,7 @@ export type VideoUpdateToOneWithWhereWithoutCommentsInput = {
 
 export type VideoUpdateWithoutCommentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1471,9 +1379,7 @@ export type VideoUpdateWithoutCommentsInput = {
 export type VideoUncheckedUpdateWithoutCommentsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1493,9 +1399,7 @@ export type VideoUncheckedUpdateWithoutCommentsInput = {
 export type VideoCreateManyChannelInput = {
   id?: number
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1509,9 +1413,7 @@ export type VideoCreateManyChannelInput = {
 
 export type VideoUpdateWithoutChannelInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1531,9 +1433,7 @@ export type VideoUpdateWithoutChannelInput = {
 export type VideoUncheckedUpdateWithoutChannelInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1553,9 +1453,7 @@ export type VideoUncheckedUpdateWithoutChannelInput = {
 export type VideoUncheckedUpdateManyWithoutChannelInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1570,9 +1468,7 @@ export type VideoUncheckedUpdateManyWithoutChannelInput = {
 export type VideoCreateManySectionInput = {
   id?: number
   name: string
-  path: string
-  videoUrl: string
-  date?: Date | string
+  url: string
   duration: number
   tags?: Prisma.VideoCreatetagsInput | string[]
   viewsCount?: number
@@ -1586,9 +1482,7 @@ export type VideoCreateManySectionInput = {
 
 export type VideoUpdateWithoutSectionInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1608,9 +1502,7 @@ export type VideoUpdateWithoutSectionInput = {
 export type VideoUncheckedUpdateWithoutSectionInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1630,9 +1522,7 @@ export type VideoUncheckedUpdateWithoutSectionInput = {
 export type VideoUncheckedUpdateManyWithoutSectionInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
-  videoUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   duration?: Prisma.IntFieldUpdateOperationsInput | number
   tags?: Prisma.VideoUpdatetagsInput | string[]
   viewsCount?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1714,9 +1604,7 @@ export type VideoCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.
 export type VideoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  path?: boolean
-  videoUrl?: boolean
-  date?: boolean
+  url?: boolean
   duration?: boolean
   tags?: boolean
   viewsCount?: boolean
@@ -1740,9 +1628,7 @@ export type VideoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 export type VideoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  path?: boolean
-  videoUrl?: boolean
-  date?: boolean
+  url?: boolean
   duration?: boolean
   tags?: boolean
   viewsCount?: boolean
@@ -1760,9 +1646,7 @@ export type VideoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type VideoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  path?: boolean
-  videoUrl?: boolean
-  date?: boolean
+  url?: boolean
   duration?: boolean
   tags?: boolean
   viewsCount?: boolean
@@ -1780,9 +1664,7 @@ export type VideoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type VideoSelectScalar = {
   id?: boolean
   name?: boolean
-  path?: boolean
-  videoUrl?: boolean
-  date?: boolean
+  url?: boolean
   duration?: boolean
   tags?: boolean
   viewsCount?: boolean
@@ -1795,7 +1677,7 @@ export type VideoSelectScalar = {
   sectionId?: boolean
 }
 
-export type VideoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "path" | "videoUrl" | "date" | "duration" | "tags" | "viewsCount" | "likesCount" | "previewUrl" | "sectionIndex" | "createdAt" | "updatedAt" | "channelId" | "sectionId", ExtArgs["result"]["video"]>
+export type VideoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "url" | "duration" | "tags" | "viewsCount" | "likesCount" | "previewUrl" | "sectionIndex" | "createdAt" | "updatedAt" | "channelId" | "sectionId", ExtArgs["result"]["video"]>
 export type VideoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   channel?: boolean | Prisma.ChannelDefaultArgs<ExtArgs>
   section?: boolean | Prisma.Video$sectionArgs<ExtArgs>
@@ -1829,9 +1711,7 @@ export type $VideoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
-    path: string
-    videoUrl: string
-    date: Date
+    url: string
     duration: number
     tags: string[]
     viewsCount: number
@@ -2274,9 +2154,7 @@ export interface Prisma__VideoClient<T, Null = never, ExtArgs extends runtime.Ty
 export interface VideoFieldRefs {
   readonly id: Prisma.FieldRef<"Video", 'Int'>
   readonly name: Prisma.FieldRef<"Video", 'String'>
-  readonly path: Prisma.FieldRef<"Video", 'String'>
-  readonly videoUrl: Prisma.FieldRef<"Video", 'String'>
-  readonly date: Prisma.FieldRef<"Video", 'DateTime'>
+  readonly url: Prisma.FieldRef<"Video", 'String'>
   readonly duration: Prisma.FieldRef<"Video", 'Int'>
   readonly tags: Prisma.FieldRef<"Video", 'String[]'>
   readonly viewsCount: Prisma.FieldRef<"Video", 'Int'>

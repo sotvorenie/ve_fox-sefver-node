@@ -1,6 +1,6 @@
 // создаем url для элемента БД из его пути Windows
 
-import path from "path";
+import path from "node:path";
 import {BASE_STORAGE_DIR} from "../config.js";
 
 export const createUrl = (filePath: string): string => {

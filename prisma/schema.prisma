@@ -31,9 +31,9 @@ model User {
 
 model Channel {
   id        Int      @id @default(autoincrement())
-  name      String
+  name      String   @unique
   url       String   @unique
-  avatarUrl String?  @map("avatar_url") @unique @db.Text
+  avatarUrl String?  @map("avatar_url") @db.Text
   tags      String[] @default([]) @db.Text
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -64,7 +64,6 @@ model Video {
   id           Int      @id @default(autoincrement())
   name         String
   url          String   @unique @db.Text
-  date         DateTime @default(now())
   duration     Int
   tags         String[] @default([]) @db.Text
   viewsCount   Int      @default(0)

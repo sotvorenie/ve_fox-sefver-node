@@ -231,6 +231,7 @@ export type HistoryOrderByWithRelationInput = {
 
 export type HistoryWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  userId_videoId?: Prisma.HistoryUserIdVideoIdCompoundUniqueInput
   AND?: Prisma.HistoryWhereInput | Prisma.HistoryWhereInput[]
   OR?: Prisma.HistoryWhereInput[]
   NOT?: Prisma.HistoryWhereInput | Prisma.HistoryWhereInput[]
@@ -239,7 +240,7 @@ export type HistoryWhereUniqueInput = Prisma.AtLeast<{
   videoId?: Prisma.IntFilter<"History"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   video?: Prisma.XOR<Prisma.VideoScalarRelationFilter, Prisma.VideoWhereInput>
-}, "id">
+}, "id" | "userId_videoId">
 
 export type HistoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -315,6 +316,11 @@ export type HistoryListRelationFilter = {
 
 export type HistoryOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type HistoryUserIdVideoIdCompoundUniqueInput = {
+  userId: number
+  videoId: number
 }
 
 export type HistoryCountOrderByAggregateInput = {

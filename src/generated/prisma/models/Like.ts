@@ -231,6 +231,7 @@ export type LikeOrderByWithRelationInput = {
 
 export type LikeWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  userId_videoId?: Prisma.LikeUserIdVideoIdCompoundUniqueInput
   AND?: Prisma.LikeWhereInput | Prisma.LikeWhereInput[]
   OR?: Prisma.LikeWhereInput[]
   NOT?: Prisma.LikeWhereInput | Prisma.LikeWhereInput[]
@@ -239,7 +240,7 @@ export type LikeWhereUniqueInput = Prisma.AtLeast<{
   videoId?: Prisma.IntFilter<"Like"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   video?: Prisma.XOR<Prisma.VideoScalarRelationFilter, Prisma.VideoWhereInput>
-}, "id">
+}, "id" | "userId_videoId">
 
 export type LikeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -315,6 +316,11 @@ export type LikeListRelationFilter = {
 
 export type LikeOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type LikeUserIdVideoIdCompoundUniqueInput = {
+  userId: number
+  videoId: number
 }
 
 export type LikeCountOrderByAggregateInput = {

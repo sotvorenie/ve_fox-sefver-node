@@ -1,5 +1,5 @@
 import 'dotenv/config'
-import path from 'path'
+import path from "node:path";
 
 export const BASE_STORAGE_DIR = path.resolve(process.env.BASE_STORAGE_DIR as string)
 export const VIDEOS_DIRECTORY = path.join(BASE_STORAGE_DIR, 'videos')

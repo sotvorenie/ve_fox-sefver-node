@@ -244,6 +244,7 @@ export type SavedTimeOrderByWithRelationInput = {
 
 export type SavedTimeWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  userId_videoId?: Prisma.SavedTimeUserIdVideoIdCompoundUniqueInput
   AND?: Prisma.SavedTimeWhereInput | Prisma.SavedTimeWhereInput[]
   OR?: Prisma.SavedTimeWhereInput[]
   NOT?: Prisma.SavedTimeWhereInput | Prisma.SavedTimeWhereInput[]
@@ -253,7 +254,7 @@ export type SavedTimeWhereUniqueInput = Prisma.AtLeast<{
   videoId?: Prisma.IntFilter<"SavedTime"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   video?: Prisma.XOR<Prisma.VideoScalarRelationFilter, Prisma.VideoWhereInput>
-}, "id">
+}, "id" | "userId_videoId">
 
 export type SavedTimeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -338,6 +339,11 @@ export type SavedTimeListRelationFilter = {
 
 export type SavedTimeOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type SavedTimeUserIdVideoIdCompoundUniqueInput = {
+  userId: number
+  videoId: number
 }
 
 export type SavedTimeCountOrderByAggregateInput = {

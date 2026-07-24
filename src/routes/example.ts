@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from 'express';
 import { z } from 'zod';
-import prisma from '../db.js';
+import {db} from "../db.js";
 
 import { asyncHandler } from '../utils/asyncHandler.js';
 import {getSkip} from "../composables/useGetSkip.js";
@@ -19,11 +19,11 @@ videoRouter.get('/all', asyncHandler(async (req: Request, res: Response) => {
 
     const skip = getSkip(page, limit)
 
-    await prisma.$executeRaw`SELECT setseed(${seed})`
+    await db.$executeRaw`SELECT setseed(${seed})`
 
-    const total = await prisma.video.count()
+    const total = await db.video.count()
 
-    const videos = await prisma.video.findMany({
+    const videos = await db.video.findMany({
         skip: skip,
         take: limit,
         include: {
@@ -50,11 +50,11 @@ videoRouter.get('/all_from_section/:section_id', getUser(), asyncHandler(async (
     const { section_id } = sectionParamsSchema.parse(req.params)
     const userId = req.user?.id
 
-    const total = await prisma.video.count({
+    const total = await db.video.count({
         where: { sectionId: section_id }
     })
 
-    const videos = await prisma.video.findMany({
+    const videos = await db.video.findMany({
         where: { sectionId: section_id },
         include: {
             channel: true,

@@ -231,6 +231,7 @@ export type WatchLaterOrderByWithRelationInput = {
 
 export type WatchLaterWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  userId_videoId?: Prisma.WatchLaterUserIdVideoIdCompoundUniqueInput
   AND?: Prisma.WatchLaterWhereInput | Prisma.WatchLaterWhereInput[]
   OR?: Prisma.WatchLaterWhereInput[]
   NOT?: Prisma.WatchLaterWhereInput | Prisma.WatchLaterWhereInput[]
@@ -239,7 +240,7 @@ export type WatchLaterWhereUniqueInput = Prisma.AtLeast<{
   videoId?: Prisma.IntFilter<"WatchLater"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   video?: Prisma.XOR<Prisma.VideoScalarRelationFilter, Prisma.VideoWhereInput>
-}, "id">
+}, "id" | "userId_videoId">
 
 export type WatchLaterOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -315,6 +316,11 @@ export type WatchLaterListRelationFilter = {
 
 export type WatchLaterOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type WatchLaterUserIdVideoIdCompoundUniqueInput = {
+  userId: number
+  videoId: number
 }
 
 export type WatchLaterCountOrderByAggregateInput = {

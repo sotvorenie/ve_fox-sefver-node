@@ -37,7 +37,7 @@ export type ChannelSumAggregateOutputType = {
 export type ChannelMinAggregateOutputType = {
   id: number | null
   name: string | null
-  path: string | null
+  url: string | null
   avatarUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -46,7 +46,7 @@ export type ChannelMinAggregateOutputType = {
 export type ChannelMaxAggregateOutputType = {
   id: number | null
   name: string | null
-  path: string | null
+  url: string | null
   avatarUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -55,7 +55,7 @@ export type ChannelMaxAggregateOutputType = {
 export type ChannelCountAggregateOutputType = {
   id: number
   name: number
-  path: number
+  url: number
   avatarUrl: number
   tags: number
   createdAt: number
@@ -75,7 +75,7 @@ export type ChannelSumAggregateInputType = {
 export type ChannelMinAggregateInputType = {
   id?: true
   name?: true
-  path?: true
+  url?: true
   avatarUrl?: true
   createdAt?: true
   updatedAt?: true
@@ -84,7 +84,7 @@ export type ChannelMinAggregateInputType = {
 export type ChannelMaxAggregateInputType = {
   id?: true
   name?: true
-  path?: true
+  url?: true
   avatarUrl?: true
   createdAt?: true
   updatedAt?: true
@@ -93,7 +93,7 @@ export type ChannelMaxAggregateInputType = {
 export type ChannelCountAggregateInputType = {
   id?: true
   name?: true
-  path?: true
+  url?: true
   avatarUrl?: true
   tags?: true
   createdAt?: true
@@ -190,7 +190,7 @@ export type ChannelGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type ChannelGroupByOutputType = {
   id: number
   name: string
-  path: string
+  url: string
   avatarUrl: string | null
   tags: string[]
   createdAt: Date
@@ -223,46 +223,46 @@ export type ChannelWhereInput = {
   NOT?: Prisma.ChannelWhereInput | Prisma.ChannelWhereInput[]
   id?: Prisma.IntFilter<"Channel"> | number
   name?: Prisma.StringFilter<"Channel"> | string
-  path?: Prisma.StringFilter<"Channel"> | string
+  url?: Prisma.StringFilter<"Channel"> | string
   avatarUrl?: Prisma.StringNullableFilter<"Channel"> | string | null
   tags?: Prisma.StringNullableListFilter<"Channel">
   createdAt?: Prisma.DateTimeFilter<"Channel"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Channel"> | Date | string
   videos?: Prisma.VideoListRelationFilter
-  section?: Prisma.ChannelSectionListRelationFilter
+  sections?: Prisma.ChannelSectionListRelationFilter
 }
 
 export type ChannelOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  path?: Prisma.SortOrder
+  url?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   tags?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   videos?: Prisma.VideoOrderByRelationAggregateInput
-  section?: Prisma.ChannelSectionOrderByRelationAggregateInput
+  sections?: Prisma.ChannelSectionOrderByRelationAggregateInput
 }
 
 export type ChannelWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  path?: string
-  avatarUrl?: string
+  name?: string
+  url?: string
   AND?: Prisma.ChannelWhereInput | Prisma.ChannelWhereInput[]
   OR?: Prisma.ChannelWhereInput[]
   NOT?: Prisma.ChannelWhereInput | Prisma.ChannelWhereInput[]
-  name?: Prisma.StringFilter<"Channel"> | string
+  avatarUrl?: Prisma.StringNullableFilter<"Channel"> | string | null
   tags?: Prisma.StringNullableListFilter<"Channel">
   createdAt?: Prisma.DateTimeFilter<"Channel"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Channel"> | Date | string
   videos?: Prisma.VideoListRelationFilter
-  section?: Prisma.ChannelSectionListRelationFilter
-}, "id" | "path" | "avatarUrl">
+  sections?: Prisma.ChannelSectionListRelationFilter
+}, "id" | "name" | "url">
 
 export type ChannelOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  path?: Prisma.SortOrder
+  url?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   tags?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -280,7 +280,7 @@ export type ChannelScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ChannelScalarWhereWithAggregatesInput | Prisma.ChannelScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Channel"> | number
   name?: Prisma.StringWithAggregatesFilter<"Channel"> | string
-  path?: Prisma.StringWithAggregatesFilter<"Channel"> | string
+  url?: Prisma.StringWithAggregatesFilter<"Channel"> | string
   avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"Channel"> | string | null
   tags?: Prisma.StringNullableListFilter<"Channel">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Channel"> | Date | string
@@ -289,54 +289,54 @@ export type ChannelScalarWhereWithAggregatesInput = {
 
 export type ChannelCreateInput = {
   name: string
-  path: string
+  url: string
   avatarUrl?: string | null
   tags?: Prisma.ChannelCreatetagsInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   videos?: Prisma.VideoCreateNestedManyWithoutChannelInput
-  section?: Prisma.ChannelSectionCreateNestedManyWithoutChannelInput
+  sections?: Prisma.ChannelSectionCreateNestedManyWithoutChannelInput
 }
 
 export type ChannelUncheckedCreateInput = {
   id?: number
   name: string
-  path: string
+  url: string
   avatarUrl?: string | null
   tags?: Prisma.ChannelCreatetagsInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
   videos?: Prisma.VideoUncheckedCreateNestedManyWithoutChannelInput
-  section?: Prisma.ChannelSectionUncheckedCreateNestedManyWithoutChannelInput
+  sections?: Prisma.ChannelSectionUncheckedCreateNestedManyWithoutChannelInput
 }
 
 export type ChannelUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tags?: Prisma.ChannelUpdatetagsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   videos?: Prisma.VideoUpdateManyWithoutChannelNestedInput
-  section?: Prisma.ChannelSectionUpdateManyWithoutChannelNestedInput
+  sections?: Prisma.ChannelSectionUpdateManyWithoutChannelNestedInput
 }
 
 export type ChannelUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tags?: Prisma.ChannelUpdatetagsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   videos?: Prisma.VideoUncheckedUpdateManyWithoutChannelNestedInput
-  section?: Prisma.ChannelSectionUncheckedUpdateManyWithoutChannelNestedInput
+  sections?: Prisma.ChannelSectionUncheckedUpdateManyWithoutChannelNestedInput
 }
 
 export type ChannelCreateManyInput = {
   id?: number
   name: string
-  path: string
+  url: string
   avatarUrl?: string | null
   tags?: Prisma.ChannelCreatetagsInput | string[]
   createdAt?: Date | string
@@ -345,7 +345,7 @@ export type ChannelCreateManyInput = {
 
 export type ChannelUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tags?: Prisma.ChannelUpdatetagsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -355,7 +355,7 @@ export type ChannelUpdateManyMutationInput = {
 export type ChannelUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tags?: Prisma.ChannelUpdatetagsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -373,7 +373,7 @@ export type StringNullableListFilter<$PrismaModel = never> = {
 export type ChannelCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  path?: Prisma.SortOrder
+  url?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
   tags?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -387,7 +387,7 @@ export type ChannelAvgOrderByAggregateInput = {
 export type ChannelMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  path?: Prisma.SortOrder
+  url?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -396,7 +396,7 @@ export type ChannelMaxOrderByAggregateInput = {
 export type ChannelMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  path?: Prisma.SortOrder
+  url?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -420,18 +420,18 @@ export type ChannelUpdatetagsInput = {
   push?: string | string[]
 }
 
-export type ChannelCreateNestedOneWithoutSectionInput = {
-  create?: Prisma.XOR<Prisma.ChannelCreateWithoutSectionInput, Prisma.ChannelUncheckedCreateWithoutSectionInput>
-  connectOrCreate?: Prisma.ChannelCreateOrConnectWithoutSectionInput
+export type ChannelCreateNestedOneWithoutSectionsInput = {
+  create?: Prisma.XOR<Prisma.ChannelCreateWithoutSectionsInput, Prisma.ChannelUncheckedCreateWithoutSectionsInput>
+  connectOrCreate?: Prisma.ChannelCreateOrConnectWithoutSectionsInput
   connect?: Prisma.ChannelWhereUniqueInput
 }
 
-export type ChannelUpdateOneRequiredWithoutSectionNestedInput = {
-  create?: Prisma.XOR<Prisma.ChannelCreateWithoutSectionInput, Prisma.ChannelUncheckedCreateWithoutSectionInput>
-  connectOrCreate?: Prisma.ChannelCreateOrConnectWithoutSectionInput
-  upsert?: Prisma.ChannelUpsertWithoutSectionInput
+export type ChannelUpdateOneRequiredWithoutSectionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ChannelCreateWithoutSectionsInput, Prisma.ChannelUncheckedCreateWithoutSectionsInput>
+  connectOrCreate?: Prisma.ChannelCreateOrConnectWithoutSectionsInput
+  upsert?: Prisma.ChannelUpsertWithoutSectionsInput
   connect?: Prisma.ChannelWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ChannelUpdateToOneWithWhereWithoutSectionInput, Prisma.ChannelUpdateWithoutSectionInput>, Prisma.ChannelUncheckedUpdateWithoutSectionInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ChannelUpdateToOneWithWhereWithoutSectionsInput, Prisma.ChannelUpdateWithoutSectionsInput>, Prisma.ChannelUncheckedUpdateWithoutSectionsInput>
 }
 
 export type ChannelCreateNestedOneWithoutVideosInput = {
@@ -448,9 +448,9 @@ export type ChannelUpdateOneRequiredWithoutVideosNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ChannelUpdateToOneWithWhereWithoutVideosInput, Prisma.ChannelUpdateWithoutVideosInput>, Prisma.ChannelUncheckedUpdateWithoutVideosInput>
 }
 
-export type ChannelCreateWithoutSectionInput = {
+export type ChannelCreateWithoutSectionsInput = {
   name: string
-  path: string
+  url: string
   avatarUrl?: string | null
   tags?: Prisma.ChannelCreatetagsInput | string[]
   createdAt?: Date | string
@@ -458,10 +458,10 @@ export type ChannelCreateWithoutSectionInput = {
   videos?: Prisma.VideoCreateNestedManyWithoutChannelInput
 }
 
-export type ChannelUncheckedCreateWithoutSectionInput = {
+export type ChannelUncheckedCreateWithoutSectionsInput = {
   id?: number
   name: string
-  path: string
+  url: string
   avatarUrl?: string | null
   tags?: Prisma.ChannelCreatetagsInput | string[]
   createdAt?: Date | string
@@ -469,25 +469,25 @@ export type ChannelUncheckedCreateWithoutSectionInput = {
   videos?: Prisma.VideoUncheckedCreateNestedManyWithoutChannelInput
 }
 
-export type ChannelCreateOrConnectWithoutSectionInput = {
+export type ChannelCreateOrConnectWithoutSectionsInput = {
   where: Prisma.ChannelWhereUniqueInput
-  create: Prisma.XOR<Prisma.ChannelCreateWithoutSectionInput, Prisma.ChannelUncheckedCreateWithoutSectionInput>
+  create: Prisma.XOR<Prisma.ChannelCreateWithoutSectionsInput, Prisma.ChannelUncheckedCreateWithoutSectionsInput>
 }
 
-export type ChannelUpsertWithoutSectionInput = {
-  update: Prisma.XOR<Prisma.ChannelUpdateWithoutSectionInput, Prisma.ChannelUncheckedUpdateWithoutSectionInput>
-  create: Prisma.XOR<Prisma.ChannelCreateWithoutSectionInput, Prisma.ChannelUncheckedCreateWithoutSectionInput>
+export type ChannelUpsertWithoutSectionsInput = {
+  update: Prisma.XOR<Prisma.ChannelUpdateWithoutSectionsInput, Prisma.ChannelUncheckedUpdateWithoutSectionsInput>
+  create: Prisma.XOR<Prisma.ChannelCreateWithoutSectionsInput, Prisma.ChannelUncheckedCreateWithoutSectionsInput>
   where?: Prisma.ChannelWhereInput
 }
 
-export type ChannelUpdateToOneWithWhereWithoutSectionInput = {
+export type ChannelUpdateToOneWithWhereWithoutSectionsInput = {
   where?: Prisma.ChannelWhereInput
-  data: Prisma.XOR<Prisma.ChannelUpdateWithoutSectionInput, Prisma.ChannelUncheckedUpdateWithoutSectionInput>
+  data: Prisma.XOR<Prisma.ChannelUpdateWithoutSectionsInput, Prisma.ChannelUncheckedUpdateWithoutSectionsInput>
 }
 
-export type ChannelUpdateWithoutSectionInput = {
+export type ChannelUpdateWithoutSectionsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tags?: Prisma.ChannelUpdatetagsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -495,10 +495,10 @@ export type ChannelUpdateWithoutSectionInput = {
   videos?: Prisma.VideoUpdateManyWithoutChannelNestedInput
 }
 
-export type ChannelUncheckedUpdateWithoutSectionInput = {
+export type ChannelUncheckedUpdateWithoutSectionsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tags?: Prisma.ChannelUpdatetagsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -508,23 +508,23 @@ export type ChannelUncheckedUpdateWithoutSectionInput = {
 
 export type ChannelCreateWithoutVideosInput = {
   name: string
-  path: string
+  url: string
   avatarUrl?: string | null
   tags?: Prisma.ChannelCreatetagsInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
-  section?: Prisma.ChannelSectionCreateNestedManyWithoutChannelInput
+  sections?: Prisma.ChannelSectionCreateNestedManyWithoutChannelInput
 }
 
 export type ChannelUncheckedCreateWithoutVideosInput = {
   id?: number
   name: string
-  path: string
+  url: string
   avatarUrl?: string | null
   tags?: Prisma.ChannelCreatetagsInput | string[]
   createdAt?: Date | string
   updatedAt?: Date | string
-  section?: Prisma.ChannelSectionUncheckedCreateNestedManyWithoutChannelInput
+  sections?: Prisma.ChannelSectionUncheckedCreateNestedManyWithoutChannelInput
 }
 
 export type ChannelCreateOrConnectWithoutVideosInput = {
@@ -545,23 +545,23 @@ export type ChannelUpdateToOneWithWhereWithoutVideosInput = {
 
 export type ChannelUpdateWithoutVideosInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tags?: Prisma.ChannelUpdatetagsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  section?: Prisma.ChannelSectionUpdateManyWithoutChannelNestedInput
+  sections?: Prisma.ChannelSectionUpdateManyWithoutChannelNestedInput
 }
 
 export type ChannelUncheckedUpdateWithoutVideosInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  path?: Prisma.StringFieldUpdateOperationsInput | string
+  url?: Prisma.StringFieldUpdateOperationsInput | string
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tags?: Prisma.ChannelUpdatetagsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  section?: Prisma.ChannelSectionUncheckedUpdateManyWithoutChannelNestedInput
+  sections?: Prisma.ChannelSectionUncheckedUpdateManyWithoutChannelNestedInput
 }
 
 
@@ -571,12 +571,12 @@ export type ChannelUncheckedUpdateWithoutVideosInput = {
 
 export type ChannelCountOutputType = {
   videos: number
-  section: number
+  sections: number
 }
 
 export type ChannelCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   videos?: boolean | ChannelCountOutputTypeCountVideosArgs
-  section?: boolean | ChannelCountOutputTypeCountSectionArgs
+  sections?: boolean | ChannelCountOutputTypeCountSectionsArgs
 }
 
 /**
@@ -599,7 +599,7 @@ export type ChannelCountOutputTypeCountVideosArgs<ExtArgs extends runtime.Types.
 /**
  * ChannelCountOutputType without action
  */
-export type ChannelCountOutputTypeCountSectionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ChannelCountOutputTypeCountSectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ChannelSectionWhereInput
 }
 
@@ -607,20 +607,20 @@ export type ChannelCountOutputTypeCountSectionArgs<ExtArgs extends runtime.Types
 export type ChannelSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  path?: boolean
+  url?: boolean
   avatarUrl?: boolean
   tags?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   videos?: boolean | Prisma.Channel$videosArgs<ExtArgs>
-  section?: boolean | Prisma.Channel$sectionArgs<ExtArgs>
+  sections?: boolean | Prisma.Channel$sectionsArgs<ExtArgs>
   _count?: boolean | Prisma.ChannelCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["channel"]>
 
 export type ChannelSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  path?: boolean
+  url?: boolean
   avatarUrl?: boolean
   tags?: boolean
   createdAt?: boolean
@@ -630,7 +630,7 @@ export type ChannelSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type ChannelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  path?: boolean
+  url?: boolean
   avatarUrl?: boolean
   tags?: boolean
   createdAt?: boolean
@@ -640,17 +640,17 @@ export type ChannelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type ChannelSelectScalar = {
   id?: boolean
   name?: boolean
-  path?: boolean
+  url?: boolean
   avatarUrl?: boolean
   tags?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "path" | "avatarUrl" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["channel"]>
+export type ChannelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "url" | "avatarUrl" | "tags" | "createdAt" | "updatedAt", ExtArgs["result"]["channel"]>
 export type ChannelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   videos?: boolean | Prisma.Channel$videosArgs<ExtArgs>
-  section?: boolean | Prisma.Channel$sectionArgs<ExtArgs>
+  sections?: boolean | Prisma.Channel$sectionsArgs<ExtArgs>
   _count?: boolean | Prisma.ChannelCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ChannelIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -660,12 +660,12 @@ export type $ChannelPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Channel"
   objects: {
     videos: Prisma.$VideoPayload<ExtArgs>[]
-    section: Prisma.$ChannelSectionPayload<ExtArgs>[]
+    sections: Prisma.$ChannelSectionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
-    path: string
+    url: string
     avatarUrl: string | null
     tags: string[]
     createdAt: Date
@@ -1065,7 +1065,7 @@ readonly fields: ChannelFieldRefs;
 export interface Prisma__ChannelClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   videos<T extends Prisma.Channel$videosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Channel$videosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VideoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  section<T extends Prisma.Channel$sectionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Channel$sectionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChannelSectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sections<T extends Prisma.Channel$sectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Channel$sectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChannelSectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1097,7 +1097,7 @@ export interface Prisma__ChannelClient<T, Null = never, ExtArgs extends runtime.
 export interface ChannelFieldRefs {
   readonly id: Prisma.FieldRef<"Channel", 'Int'>
   readonly name: Prisma.FieldRef<"Channel", 'String'>
-  readonly path: Prisma.FieldRef<"Channel", 'String'>
+  readonly url: Prisma.FieldRef<"Channel", 'String'>
   readonly avatarUrl: Prisma.FieldRef<"Channel", 'String'>
   readonly tags: Prisma.FieldRef<"Channel", 'String[]'>
   readonly createdAt: Prisma.FieldRef<"Channel", 'DateTime'>
@@ -1519,9 +1519,9 @@ export type Channel$videosArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * Channel.section
+ * Channel.sections
  */
-export type Channel$sectionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Channel$sectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the ChannelSection
    */

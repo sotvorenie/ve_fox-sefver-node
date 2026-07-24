@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 
+import {DataSynchronizer} from "./cache.js";
 import {testRouter} from "./routes/test.js";
 
 const app = express();
@@ -14,6 +15,13 @@ app.use(morgan('dev'));
 
 app.use('/api', testRouter)
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`Сервер запущен на порту ${PORT}`)
+
+    try {
+        const synchronizer = new DataSynchronizer()
+        await synchronizer.sync()
+    } catch (err) {
+        console.error(err)
+    }
 })

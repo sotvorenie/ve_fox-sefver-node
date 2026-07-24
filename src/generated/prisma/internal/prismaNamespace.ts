@@ -1223,7 +1223,7 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 export const ChannelScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  path: 'path',
+  url: 'url',
   avatarUrl: 'avatarUrl',
   tags: 'tags',
   createdAt: 'createdAt',
@@ -1246,9 +1246,7 @@ export type ChannelSectionScalarFieldEnum = (typeof ChannelSectionScalarFieldEnu
 export const VideoScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  path: 'path',
-  videoUrl: 'videoUrl',
-  date: 'date',
+  url: 'url',
   duration: 'duration',
   tags: 'tags',
   viewsCount: 'viewsCount',
