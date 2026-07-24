@@ -1,0 +1,196 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+model User {
+  id            Int     @id @default(autoincrement())
+  name          String  @db.VarChar(20)
+  login         String  @unique @db.VarChar(20)
+  password      String  @db.VarChar(255)
+  avatarUrl     String? @map("avatar_url")
+  routerMap     String? @map("router_map") @db.Text
+  searchHistory String? @map("search_history") @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  likes        Like[]
+  history      History[]
+  savedTimes   SavedTime[]
+  watchLater   WatchLater[]
+  comments     Comment[]
+  commentLikes CommentLike[]
+
+  @@map("users")
+}
+
+model Channel {
+  id        Int      @id @default(autoincrement())
+  name      String
+  url       String   @unique
+  avatarUrl String?  @map("avatar_url") @unique @db.Text
+  tags      String[] @default([]) @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  videos   Video[]
+  sections ChannelSection[]
+
+  @@map("channels")
+}
+
+model ChannelSection {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  channelId Int @map("channel_id")
+
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  videos  Video[]
+
+  @@unique([channelId, name])
+  @@map("channel_sections")
+}
+
+model Video {
+  id           Int      @id @default(autoincrement())
+  name         String
+  url          String   @unique @db.Text
+  date         DateTime @default(now())
+  duration     Int
+  tags         String[] @default([]) @db.Text
+  viewsCount   Int      @default(0)
+  likesCount   Int      @default(0)
+  previewUrl   String?  @map("preview_url") @db.Text
+  sectionIndex Int      @default(1)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  channelId Int  @map("channel_id")
+  sectionId Int? @map("section_id")
+
+  channel    Channel         @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  section    ChannelSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  savedTimes SavedTime[]
+  likes      Like[]
+  history    History[]
+  watchLater WatchLater[]
+  comments   Comment[]
+
+  @@index([channelId])
+  @@index([sectionId])
+  @@index([tags], map: "idx_video_tags", type: Gin)
+  @@map("videos")
+}
+
+model Like {
+  id   Int      @id @default(autoincrement())
+  date DateTime @default(now())
+
+  userId  Int @map("user_id")
+  videoId Int @map("video_id")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([videoId])
+  @@unique([userId, videoId])
+  @@map("likes")
+}
+
+model History {
+  id   Int      @id @default(autoincrement())
+  date DateTime @default(now())
+
+  userId  Int @map("user_id")
+  videoId Int @map("video_id")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([videoId])
+  @@unique([userId, videoId])
+  @@map("histories")
+}
+
+model SavedTime {
+  id   Int   @id @default(autoincrement())
+  time Float
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  userId  Int @map("user_id")
+  videoId Int @map("video_id")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([videoId])
+  @@unique([userId, videoId])
+  @@map("saved_times")
+}
+
+model WatchLater {
+  id   Int      @id @default(autoincrement())
+  date DateTime @default(now())
+
+  userId  Int @map("user_id")
+  videoId Int @map("video_id")
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([videoId])
+  @@unique([userId, videoId])
+  @@map("watch_laters")
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  text       String   @db.VarChar(1000)
+  date       DateTime @default(now())
+  parentId   Int?     @map("parent_id")
+  isRedacted Boolean  @map("is_redacted") @default(false)
+  likes      Int      @default(0)
+
+  userId  Int @map("user_id")
+  videoId Int @map("video_id")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video        Video         @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  commentLikes CommentLike[]
+
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentReplies")
+
+  @@index([userId])
+  @@index([videoId])
+  @@index([parentId])
+  @@map("comments")
+}
+
+model CommentLike {
+  id   Int      @id @default(autoincrement())
+  date DateTime @default(now())
+
+  userId    Int @map("user_id")
+  commentId Int @map("comment_id")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@map("comment_likes")
+}
