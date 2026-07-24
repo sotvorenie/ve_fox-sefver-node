@@ -47,7 +47,7 @@ export class DataSynchronizer {
             const channelPath = path.join(VIDEOS_DIRECTORY, channelName)
             const channelUrl: string = createUrl(channelPath)
 
-            const channelAvatarFile = await this.findFile(channelPath)
+            const channelAvatarFile = await this.findFile(channelPath, false)
             const channelAvatarUrl = channelAvatarFile ? createUrl(channelAvatarFile) : null
 
             const channelTags: string[] = getTagsByTitle(channelName)
@@ -87,16 +87,19 @@ export class DataSynchronizer {
     }
 
     private async syncVideos(channelPath: string, channelId: number): Promise<void> {
-        const videos = await safeReaddir(channelPath)
+        const videosPath: string = path.join(channelPath, 'videos')
+        const previewsPath: string = path.join(channelPath, 'previews')
+
+        const videos = await safeReaddir(videosPath)
 
         for (const video of videos) {
-            if (!video.isDirectory()) continue
+            if (video.isDirectory()) continue
 
             const videoName: string = video.name
-            const videoPath: string = path.join(channelPath, videoName)
+            const videoPath: string = path.join(videosPath, videoName)
             const videoUrl: string = createUrl(videoPath)
 
-            const videoPreviewFile = await this.findFile(videoPath, false)
+            const videoPreviewFile = await this.findFile(previewsPath, false, videoName)
             const videoPreviewUrl = videoPreviewFile ? createUrl(videoPreviewFile) : null
 
             const videoTags: string[] = getTagsByTitle(videoName)
@@ -143,11 +146,15 @@ export class DataSynchronizer {
         })
     }
 
-    private async findFile(dir: string, isVideo: boolean = true): Promise<string | null> {
+    private async findFile(dir: string, isVideo: boolean = true, name?: string): Promise<string | null> {
         const files = await safeReaddir(dir)
         const found = files.find(f => {
             const suffix = path.extname(f.name).toLowerCase()
-            return isVideo ?  ALLOWED_VIDEO_SUFFIX.has(suffix) : ALLOWED_PHOTO_SUFFIX.has(suffix)
+            const isValidType = isVideo ? ALLOWED_VIDEO_SUFFIX.has(suffix) : ALLOWED_PHOTO_SUFFIX.has(suffix)
+            if (!isValidType) return false
+
+            if (name) return path.parse(f.name).name === path.parse(name).name
+            return true
         })
         return found ? path.join(dir, found.name) : null
     }
