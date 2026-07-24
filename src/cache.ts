@@ -8,8 +8,34 @@ import {getTagsByTitle} from "./composables/useGetTagsByTitle.js";
 import {getVideoDuration} from "./composables/useGetVideoDuration.js";
 
 export class DataSynchronizer {
+    private channelsFromDB = new Map<string, { id: number; url: string; name: string }>()
+    private videosFromDB = new Map<string, { id: number; url: string; name: string }>()
+
     private readonly actualChannels = new Set<string>()
     private readonly actualVideos = new Set<string>()
+
+    private async loadDataFromDB(): Promise<void> {
+        const channels = await db.channel.findMany({
+            select: {
+                id: true,
+                url: true,
+                name: true,
+            }
+        })
+        this.channelsFromDB = new Map(channels.map(c => [c.url, c]))
+
+        const videos = await db.video.findMany({
+            select: {
+                id: true,
+                url: true,
+                name: true,
+            }
+        })
+        this.videosFromDB = new Map(videos.map(v => [v.url, v]))
+
+        this.actualChannels.clear()
+        this.actualVideos.clear()
+    }
 
     private async syncChannels(): Promise<void> {
         const channels = await safeReaddir(VIDEOS_DIRECTORY)
@@ -26,13 +52,10 @@ export class DataSynchronizer {
 
             const channelTags: string[] = getTagsByTitle(channelName)
 
-            let dbChannel = await db.channel.findUnique({
-                where: {
-                    url: channelUrl,
-                }
-            })
+            let dbChannel = this.channelsFromDB.get(channelUrl)
+            let channelId: number
             if (dbChannel) {
-                dbChannel = await db.channel.update({
+                await db.channel.update({
                     where: {
                         url: channelUrl,
                     },
@@ -42,9 +65,10 @@ export class DataSynchronizer {
                         avatarUrl: channelAvatarUrl,
                     }
                 })
+                channelId = dbChannel.id
                 console.log(`Обновлена информация о канале: ${channelName}`)
             } else {
-                dbChannel = await db.channel.create({
+                const newChannel = await db.channel.create({
                     data: {
                         name: channelName,
                         url: channelUrl,
@@ -52,12 +76,13 @@ export class DataSynchronizer {
                         tags: channelTags,
                     }
                 })
-                console.log(`Обновлен новый канал: ${channelName}`)
+                channelId = newChannel.id
+                console.log(`Добавлен новый канал: ${channelName}`)
             }
 
             this.actualChannels.add(channelUrl)
 
-            await this.syncVideos(channelPath, dbChannel.id)
+            await this.syncVideos(channelPath, channelId)
         }
     }
 
@@ -76,13 +101,9 @@ export class DataSynchronizer {
 
             const videoTags: string[] = getTagsByTitle(videoName)
 
-            let dbVideo = await db.video.findUnique({
-                where: {
-                    url: videoUrl,
-                }
-            })
+            let dbVideo = this.videosFromDB.get(videoUrl)
             if (dbVideo) {
-                dbVideo = await db.video.update({
+                await db.video.update({
                     where: {
                         url: videoUrl,
                     },
@@ -94,7 +115,7 @@ export class DataSynchronizer {
                 })
                 console.log(`Обновлена информация о видео: ${videoName}`)
             } else {
-                dbVideo = await db.video.create({
+                await db.video.create({
                     data: {
                         name: videoName,
                         url: videoUrl,
@@ -113,7 +134,7 @@ export class DataSynchronizer {
         }
     }
 
-    private async deleteUnused() {
+    private async deleteUnused(): Promise<void> {
         await db.channel.deleteMany({
             where: {url: {notIn: Array.from(this.actualChannels)}}
         })
@@ -132,7 +153,12 @@ export class DataSynchronizer {
     }
 
     async sync(): Promise<void> {
+        console.log('Синхронизация данных..')
+
+        await this.loadDataFromDB()
         await this.syncChannels()
         await this.deleteUnused()
+
+        console.log('Синхронизация прошла успешно!!')
     }
 }
