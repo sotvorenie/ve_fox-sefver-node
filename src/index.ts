@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import {DataSynchronizer} from "./cache.js";
 import {testRouter} from "./routes/test.js";
 import {authRouter} from "./routes/auth.js";
+import {channelRouter} from "./routes/channel.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,6 +17,7 @@ app.use(morgan('dev'));
 
 app.use('/api', testRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/channel', channelRouter)
 
 app.listen(PORT, async () => {
     console.log(`Сервер запущен на порту ${PORT}`)

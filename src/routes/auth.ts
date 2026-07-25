@@ -17,8 +17,7 @@ const registerQuerySchema = z.object({
     name: z.string(),
 })
 authRouter.post('/register', asyncHandler(async (req: Request, res: Response) => {
-    const queryParams = registerQuerySchema.parse(req.body)
-    const { login, password, name } = queryParams
+    const { login, password, name } = registerQuerySchema.parse(req.body)
 
     const existingUser = await db.user.findUnique({where: {login}})
     if (existingUser) throw registrationException
@@ -52,8 +51,7 @@ const authQuerySchema = z.object({
     password: z.string(),
 })
 authRouter.post('/login', asyncHandler(async (req: Request, res: Response) => {
-    const queryParams = authQuerySchema.parse(req.body)
-    const { login} = queryParams
+    const { login} = authQuerySchema.parse(req.body)
 
     const user = await db.user.findUnique({where: {login}})
     if (!user) throw authException
