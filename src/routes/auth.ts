@@ -16,7 +16,7 @@ const registerQuerySchema = z.object({
     password: z.string(),
     name: z.string(),
 })
-authRouter.post('/auth/register', asyncHandler(async (req: Request, res: Response) => {
+authRouter.post('/register', asyncHandler(async (req: Request, res: Response) => {
     const queryParams = registerQuerySchema.parse(req.body)
     const { login, password, name } = queryParams
 
@@ -51,7 +51,7 @@ const authQuerySchema = z.object({
     login: z.string(),
     password: z.string(),
 })
-authRouter.post('/auth/login', asyncHandler(async (req: Request, res: Response) => {
+authRouter.post('/login', asyncHandler(async (req: Request, res: Response) => {
     const queryParams = authQuerySchema.parse(req.body)
     const { login} = queryParams
 
@@ -70,7 +70,7 @@ authRouter.post('/auth/login', asyncHandler(async (req: Request, res: Response) 
     })
 }))
 
-authRouter.get('/auth/me', getUser(), asyncHandler(async (req: Request, res: Response) => {
+authRouter.get('/me', getUser(), asyncHandler(async (req: Request, res: Response) => {
     res.json({
         user: req.user,
         token: createJWTToken(req.user!.id),
