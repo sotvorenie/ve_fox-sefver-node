@@ -1,25 +1,16 @@
-import 'dotenv/config'
 import jwt from 'jsonwebtoken';
-import { type Request, type Response, type NextFunction } from 'express';
-import dotenv from 'dotenv';
-import prisma from "../db.js";
+import {type NextFunction, type Request, type Response} from 'express';
+import {db} from "../db.js";
 
 import {jwtException} from "./httpExceptions.js";
 import {asyncHandler} from "./asyncHandler.js";
 
-dotenv.config();
-
-const SECRET_KEY: string = process.env.SECRET_KEY || '';
+const SECRET_KEY: string = process.env.SECRET_KEY as string
 
 export const createJWTToken = (userId: number | string) => {
-    const expiresIn = 60 * 60 * 24 * 7;
+    const expiresIn = 60 * 60 * 24 * 7
     const payload = {sub: String(userId)}
-    const accessToken = jwt.sign(payload, SECRET_KEY, {expiresIn})
-
-    return {
-        accessToken,
-        token_type: 'bearer',
-    }
+    return jwt.sign(payload, SECRET_KEY, {expiresIn})
 }
 
 export const getUser = (required: boolean = true) => {
@@ -33,7 +24,7 @@ export const getUser = (required: boolean = true) => {
         const token = authHeader.split(' ')[1]
         const payload = jwt.verify(token as string, SECRET_KEY) as { sub: string }
 
-        const user = await prisma.user.findUnique({
+        const user = await db.user.findUnique({
             where: { id: Number(payload.sub) }
         })
 

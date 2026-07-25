@@ -1,6 +1,6 @@
 // безопасное открытие папки
 
-import fs from 'fs/promises';
+import fs from 'node:fs/promises';
 
 export const safeReaddir = async (path: string) => {
     try {
