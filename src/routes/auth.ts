@@ -11,13 +11,13 @@ export const authRouter = Router();
 
 const productName: string = process.env.PRODUCT_NAME as string
 
-const registerQuerySchema = z.object({
+const registerBodySchema = z.object({
     login: z.string(),
     password: z.string(),
     name: z.string(),
 })
 authRouter.post('/register', asyncHandler(async (req: Request, res: Response) => {
-    const { login, password, name } = registerQuerySchema.parse(req.body)
+    const { login, password, name } = registerBodySchema.parse(req.body)
 
     const existingUser = await db.user.findUnique({where: {login}})
     if (existingUser) throw registrationException
@@ -46,12 +46,12 @@ authRouter.post('/register', asyncHandler(async (req: Request, res: Response) =>
     })
 }))
 
-const authQuerySchema = z.object({
+const authBodySchema = z.object({
     login: z.string(),
     password: z.string(),
 })
 authRouter.post('/login', asyncHandler(async (req: Request, res: Response) => {
-    const { login} = authQuerySchema.parse(req.body)
+    const { login} = authBodySchema.parse(req.body)
 
     const user = await db.user.findUnique({where: {login}})
     if (!user) throw authException
