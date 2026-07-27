@@ -191,5 +191,6 @@ model CommentLike {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, commentId])
   @@map("comment_likes")
 }

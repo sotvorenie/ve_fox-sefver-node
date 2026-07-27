@@ -98,10 +98,11 @@ const getChannelVideosQuerySchema = z.object({
     limit: z.string().optional().default('21').transform(Number),
     is_new: z.string().optional().default('true').transform(Boolean),
     is_popular: z.string().optional().default('false').transform(Boolean),
+    get_total: z.string().optional().default('true').transform(Boolean),
 })
 channelRouter.get('/:channel_id/videos', getUser(false), asyncHandler(async (req: Request, res: Response) => {
     const { channel_id: channelId } = getChannelVideosParamsSchema.parse(req.params)
-    const { page, limit, is_new: isNew, is_popular: isPopular } = getChannelVideosQuerySchema.parse(req.query)
+    const { page, limit, is_new: isNew, is_popular: isPopular, get_total: getTotal } = getChannelVideosQuerySchema.parse(req.query)
     const currentUserId = req.user?.id
 
     const channel = await db.channel.findUnique({where: {id: channelId}})
@@ -148,7 +149,7 @@ channelRouter.get('/:channel_id/videos', getUser(false), asyncHandler(async (req
                 }
             }
         }),
-        db.video.count({where: {channelId}})
+        getTotal ? db.video.count({where: {channelId}}) : Promise.resolve(0)
     ])
 
     const formattedVideos = videos.map((video: any) => ({
