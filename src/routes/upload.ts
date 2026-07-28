@@ -1,17 +1,23 @@
 import { Router, type Request, type Response } from 'express';
 import { z } from 'zod';
-import {db} from "../db.js";
-import multer from 'multer'
+import multer from 'multer';
 import path from 'node:path';
 import fs from 'node:fs/promises'
+import {db} from "../db.js";
 
 import { asyncHandler } from '../utils/asyncHandler.js';
 import {getUser} from "../utils/auth.js";
-import {channelException, uploadedVideoException} from "../utils/httpExceptions.js";
-import {TEMPORARY_DIRECTORY, VIDEOS_DIRECTORY} from "../config.js";
+import {
+    channelException,
+    photoFormatException,
+    uploadedVideoException,
+    videoFormatException
+} from "../utils/httpExceptions.js";
+import {ALLOWED_PHOTO_SUFFIX, ALLOWED_VIDEO_SUFFIX, VIDEOS_DIRECTORY} from "../config.js";
 import {normalizePathName} from "../composables/useNormalizePathName.js";
 import {createUrl} from "../composables/useCreateUrl.js";
 import {getVideoDuration} from "../composables/useGetVideoDuration.js";
+import {uploadStorage} from "../composables/useUploadStorage.js";
 
 export const uploadRouter = Router();
 
@@ -24,21 +30,7 @@ const uploadBodySchema = z.object({
         return val.split(',').map((t: string) => t.trim()).filter(Boolean)
     })
 })
-const storage = multer.diskStorage({
-    destination: async (_, __, cb) => {
-        try {
-            await fs.mkdir(TEMPORARY_DIRECTORY, { recursive: true })
-            cb(null, TEMPORARY_DIRECTORY)
-        } catch (err) {
-            cb(err as Error, TEMPORARY_DIRECTORY)
-        }
-    },
-    filename: (_, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, uniqueSuffix + path.extname(file.originalname))
-    }
-})
-const upload = multer({storage})
+const upload = multer({storage: uploadStorage})
 uploadRouter.post(
     '/',
     getUser(),
@@ -64,6 +56,15 @@ uploadRouter.post(
 
         const formattedName = normalizePathName(title)
 
+        const videoSuffix = path.extname(videoFile.originalname).toLowerCase()
+        if (!ALLOWED_VIDEO_SUFFIX.has(videoSuffix)) throw videoFormatException
+
+        let previewSuffix: string = ''
+        if (previewFile) {
+            previewSuffix = path.extname(previewFile.originalname).toLowerCase()
+            if (!ALLOWED_PHOTO_SUFFIX.has(previewSuffix)) throw photoFormatException
+        }
+
         let targetVideoPath: string | null = null
         let targetPreviewPath: string | null = null
 
@@ -73,12 +74,10 @@ uploadRouter.post(
             await fs.mkdir(videosDirectory, { recursive: true })
             await fs.mkdir(previewsDirectory, { recursive: true })
 
-            const videoSuffix = path.extname(videoFile.originalname).toLowerCase()
             targetVideoPath = path.join(videosDirectory, `${formattedName}${videoSuffix}`)
             await fs.rename(videoFile.path, targetVideoPath)
 
             if (previewFile) {
-                const previewSuffix = path.extname(previewFile.originalname).toLowerCase()
                 targetPreviewPath = path.join(previewsDirectory, `${formattedName}${previewSuffix}`)
                 await fs.rename(previewFile.path, targetPreviewPath)
             }

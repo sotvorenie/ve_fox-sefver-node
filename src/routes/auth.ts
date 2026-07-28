@@ -51,16 +51,21 @@ const authBodySchema = z.object({
     password: z.string(),
 })
 authRouter.post('/login', asyncHandler(async (req: Request, res: Response) => {
-    const { login} = authBodySchema.parse(req.body)
+    const { login, password} = authBodySchema.parse(req.body)
 
     const user = await db.user.findUnique({where: {login}})
     if (!user) throw authException
 
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+    if (!isPasswordValid) throw authException
+
     console.log(`Пользователь ${user.name} авторизовался в приложении ${productName}`)
+
+    const {password: _, ...userWithoutPassword} = user
 
     res.status(201).json({
         user: {
-            ...user,
+            ...userWithoutPassword,
             router_map: '',
             search_history: ''
         },
