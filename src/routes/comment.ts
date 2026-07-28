@@ -16,11 +16,10 @@ const getVideoCommentsQuerySchema = z.object({
     page: z.string().optional().default('1').transform(Number),
     limit: z.string().optional().default('21').transform(Number),
     is_new: z.string().optional().default('true').transform(Boolean),
-    get_total: z.string().optional().default('true').transform(Boolean),
 })
 commentsRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
     const { video_id: videoId } = getVideoCommentsParamsSchema.parse(req.params)
-    const { page, limit, is_new: isNew, get_total: getTotal } = getVideoCommentsQuerySchema.parse(req.query)
+    const { page, limit, is_new: isNew } = getVideoCommentsQuerySchema.parse(req.query)
     const currentUserId = req.user?.id
 
     const skip: number = getSkip(page, limit)
@@ -62,7 +61,7 @@ commentsRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Reques
                 }
             }
         }),
-        getTotal ? db.comment.count({where: {videoId, parentId: null}}) : Promise.resolve(0)
+        db.comment.count({where: {videoId, parentId: null}})
     ])
 
     const formattedComments = comments.map(comment => ({
