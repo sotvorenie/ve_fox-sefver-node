@@ -3,11 +3,30 @@ import { z } from 'zod';
 import {db} from "../db.js";
 
 import { asyncHandler } from '../utils/asyncHandler.js';
-import {getSkip} from "../composables/useGetSkip.js";
 import {getUser} from "../utils/auth.js";
 import {videoException} from "../utils/httpExceptions.js";
+import {getAllVideos, modelMap} from "../services/getAllVideosService.js";
 
 export const likesRouter = Router();
+
+const getLikesQuerySchema = z.object({
+    page: z.string().optional().default('1').transform(Number),
+    limit: z.string().optional().default('21').transform(Number),
+})
+likesRouter.get('/all', getUser(), asyncHandler(async (req: Request, res: Response) => {
+    const { page, limit } = getLikesQuerySchema.parse(req.query)
+    const currentUserId = req.user!.id
+
+    const {videos, total, skip} = await getAllVideos(modelMap.like, currentUserId, page, limit)
+
+    res.json({
+        videos,
+        total,
+        page,
+        limit,
+        has_more: (skip + limit) < total,
+    })
+}))
 
 const likeParamsSchema = z.object({
     video_id: z.string().transform(Number),
@@ -69,73 +88,5 @@ likesRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request, res:
 
     res.json({
         is_liked: isLiked
-    })
-}))
-
-const getLikesQuerySchema = z.object({
-    page: z.string().optional().default('1').transform(Number),
-    limit: z.string().optional().default('21').transform(Number),
-})
-likesRouter.get('/all', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { page, limit } = getLikesQuerySchema.parse(req.query)
-    const currentUserId = req.user!.id
-
-    const skip: number = getSkip(page, limit)
-
-    const [likeItems, total] = await Promise.all([
-        db.like.findMany({
-            where: {
-                userId: currentUserId,
-            },
-            orderBy: {date: 'desc'},
-            skip,
-            take: limit,
-            select: {
-                video: {
-                    select: {
-                        id: true,
-                        name: true,
-                        createdAt: true,
-                        duration: true,
-                        viewsCount: true,
-                        url: true,
-                        previewUrl: true,
-                        channel: {
-                            select: {
-                                id: true,
-                                name: true,
-                                avatarUrl: true,
-                            }
-                        },
-                        savedTimes: {
-                            where: {
-                                userId: currentUserId,
-                            },
-                            select: {
-                                time: true,
-                            }
-                        }
-                    }
-                }
-            }
-        }),
-        db.like.count({where: {userId: currentUserId}})
-    ])
-
-    const formattedVideos = likeItems.map(likeItem => {
-        const video = likeItem.video
-        return {
-            ...video,
-            saved_time: video.savedTimes?.[0]?.time ?? null,
-            savedTimes: undefined
-        }
-    })
-
-    res.json({
-        videos: formattedVideos,
-        total,
-        page,
-        limit,
-        has_more: (skip + limit) < total,
     })
 }))

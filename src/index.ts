@@ -15,6 +15,7 @@ import {searchRouter} from "./routes/search.js";
 import {uploadRouter} from "./routes/upload.js";
 import {userRouter} from "./routes/user.js";
 import {videosRouter} from "./routes/video.js";
+import {watchLaterRouter} from "./routes/watchLater.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -34,6 +35,7 @@ app.use('/api/search', searchRouter)
 app.use('/api/upload', uploadRouter)
 app.use('/api/user', userRouter)
 app.use('/api/video', videosRouter)
+app.use('/api/watch_later', watchLaterRouter)
 
 app.listen(PORT, async () => {
     console.log(`Сервер запущен на порту ${PORT}`)
