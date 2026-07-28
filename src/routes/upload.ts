@@ -97,20 +97,11 @@ uploadRouter.post(
 
             res.json(newVideo)
         } catch (err) {
-            if (targetVideoPath) {
-                await fs.unlink(targetVideoPath).catch()
-            }
-            if (targetPreviewPath) {
-                await fs.unlink(targetPreviewPath).catch()
-            }
+            if (targetVideoPath) await fs.unlink(targetVideoPath).catch()
+            if (targetPreviewPath) await fs.unlink(targetPreviewPath).catch()
 
-            const files = req.files as { [fieldname: string]: Express.Multer.File[] }
-            if (files?.video?.[0]) {
-                await fs.unlink(files.video[0].path).catch()
-            }
-            if (files?.preview?.[0]) {
-                await fs.unlink(files.preview[0].path).catch()
-            }
+            await fs.unlink(files?.video?.[0]?.path ?? '').catch()
+            await fs.unlink(files?.preview?.[0]?.path ?? '').catch()
 
             throw err
         }

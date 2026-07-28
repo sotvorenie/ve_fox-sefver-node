@@ -132,14 +132,9 @@ userRouter.post(
                 new_avatar_url: newAvatarUrl,
             })
         } catch (err) {
-            if (targetAvatarPath) {
-                await fs.unlink(targetAvatarPath).catch()
-            }
+            if (targetAvatarPath) await fs.unlink(targetAvatarPath).catch()
 
-            const files = req.files as { [fieldname: string]: Express.Multer.File[] }
-            if (files?.avatar?.[0]) {
-                await fs.unlink(files.avatar[0].path).catch()
-            }
+            await fs.unlink(files?.avatar?.[0]?.path ?? '').catch()
 
             throw err
         }
