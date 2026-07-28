@@ -13,6 +13,7 @@ import {likesRouter} from "./routes/like.js";
 import {saveTimesRouter} from "./routes/saveTime.js";
 import {searchRouter} from "./routes/search.js";
 import {uploadRouter} from "./routes/upload.js";
+import {userRouter} from "./routes/user.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -30,6 +31,7 @@ app.use('/api/like', likesRouter)
 app.use('/api/save_time', saveTimesRouter)
 app.use('/api/search', searchRouter)
 app.use('/api/upload', uploadRouter)
+app.use('/api/user', userRouter)
 
 app.listen(PORT, async () => {
     console.log(`Сервер запущен на порту ${PORT}`)
