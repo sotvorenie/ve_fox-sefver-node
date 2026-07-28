@@ -124,8 +124,6 @@ export class DataSynchronizer {
                         url: videoUrl,
                         duration: await getVideoDuration(videoPath),
                         tags: videoTags,
-                        viewsCount: 0,
-                        likesCount: 0,
                         previewUrl: videoPreviewUrl,
                         channelId: channelId,
                     }
