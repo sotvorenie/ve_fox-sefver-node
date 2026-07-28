@@ -87,70 +87,6 @@ videosRouter.get('/all', getUser(false), asyncHandler(async (req: Request, res: 
     })
 }))
 
-const getAllVideosFromSectionParamsSchema = z.object({
-    section_id: z.string().transform(Number),
-})
-const getAllVideosFromSectionQuerySchema = z.object({
-    page: z.string().optional().default('1').transform(Number),
-    limit: z.string().optional().default('21').transform(Number),
-})
-videosRouter.get('/section/:section_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
-    const { section_id: sectionId } = getAllVideosFromSectionParamsSchema.parse(req.params)
-    const { page, limit } = getAllVideosFromSectionQuerySchema.parse(req.query)
-    const currentUserId = req.user?.id
-
-    const skip: number = getSkip(page, limit)
-
-    const [videos, total] = await Promise.all([
-        db.video.findMany({
-            where: {
-                sectionId
-            },
-            skip,
-            take: limit,
-            select: {
-                id: true,
-                name: true,
-                createdAt: true,
-                duration: true,
-                viewsCount: true,
-                url: true,
-                channel: {
-                    select: {
-                        id: true,
-                        name: true,
-                        avatarUrl: true,
-                    }
-                },
-                previewUrl: true,
-                savedTimes: {
-                    where: {
-                        userId: currentUserId ?? -1
-                    },
-                    select: {
-                        time: true
-                    }
-                }
-            }
-        }),
-        db.video.count({where: {sectionId}})
-    ])
-
-    const formattedVideos = videos.map(video => ({
-        ...video,
-        saved_time: video.savedTimes?.[0]?.time ?? null,
-        savedTimes: undefined
-    }))
-
-    res.json({
-        videos: formattedVideos,
-        total,
-        page,
-        limit,
-        has_more: (skip + limit) < total,
-    })
-}))
-
 const getVideoParamsSchema = z.object({
     video_id: z.string().transform(Number),
 })
@@ -230,6 +166,70 @@ videosRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Request,
     }
 
     res.json(video)
+}))
+
+const getAllVideosFromSectionParamsSchema = z.object({
+    section_id: z.string().transform(Number),
+})
+const getAllVideosFromSectionQuerySchema = z.object({
+    page: z.string().optional().default('1').transform(Number),
+    limit: z.string().optional().default('21').transform(Number),
+})
+videosRouter.get('/section/:section_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
+    const { section_id: sectionId } = getAllVideosFromSectionParamsSchema.parse(req.params)
+    const { page, limit } = getAllVideosFromSectionQuerySchema.parse(req.query)
+    const currentUserId = req.user?.id
+
+    const skip: number = getSkip(page, limit)
+
+    const [videos, total] = await Promise.all([
+        db.video.findMany({
+            where: {
+                sectionId
+            },
+            skip,
+            take: limit,
+            select: {
+                id: true,
+                name: true,
+                createdAt: true,
+                duration: true,
+                viewsCount: true,
+                url: true,
+                channel: {
+                    select: {
+                        id: true,
+                        name: true,
+                        avatarUrl: true,
+                    }
+                },
+                previewUrl: true,
+                savedTimes: {
+                    where: {
+                        userId: currentUserId ?? -1
+                    },
+                    select: {
+                        time: true
+                    }
+                }
+            }
+        }),
+        db.video.count({where: {sectionId}})
+    ])
+
+    const formattedVideos = videos.map(video => ({
+        ...video,
+        saved_time: video.savedTimes?.[0]?.time ?? null,
+        savedTimes: undefined
+    }))
+
+    res.json({
+        videos: formattedVideos,
+        total,
+        page,
+        limit,
+        has_more: (skip + limit) < total,
+    })
 }))
 
 const getRecommendedVideosParamsSchema = z.object({
