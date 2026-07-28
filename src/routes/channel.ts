@@ -4,8 +4,8 @@ import {db} from "../db.js";
 
 import { asyncHandler } from '../utils/asyncHandler.js';
 import {channelException, duplicationSectionException} from "../utils/httpExceptions.js";
-import {getSkip} from "../composables/useGetSkip.js";
 import {getUser} from "../utils/auth.js";
+import {getChannelVideos} from "../services/channelService.js";
 
 export const channelRouter = Router();
 
@@ -30,22 +30,33 @@ channelRouter.get('/all', asyncHandler(async (_: Request, res: Response) => {
 const getChannelParamsSchema = z.object({
     channel_id: z.string().transform(Number),
 })
-channelRouter.get('/:channel_id', asyncHandler(async (req: Request, res: Response) => {
+channelRouter.get('/:channel_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
     const { channel_id: channelId } = getChannelParamsSchema.parse(req.params)
+    const currentUserId = req.user?.id
 
-    const channel = await db.channel.findUnique({
-        where: {
-            id: channelId
-        },
-        select: {
-            id: true,
-            name: true,
-            avatarUrl: true,
-            createdAt: true,
-        }
+    const [channel, newVideosData, popularVideosData] = await Promise.all([
+        db.channel.findUnique({
+            where: {
+                id: channelId
+            },
+            select: {
+                id: true,
+                name: true,
+                avatarUrl: true,
+                createdAt: true,
+            }
+        }),
+        getChannelVideos(channelId, 1, 8, true, false, currentUserId),
+        getChannelVideos(channelId, 1, 8, false, true, currentUserId)
+    ])
+
+    if (!channel) throw channelException
+
+    res.json({
+        channel,
+        new_videos: newVideosData.videos,
+        popular_videos: popularVideosData.videos,
     })
-
-    res.json(channel)
 }))
 
 const getChannelSectionsParamsSchema = z.object({
@@ -105,60 +116,19 @@ channelRouter.get('/:channel_id/videos', getUser(false), asyncHandler(async (req
     const currentUserId = req.user?.id
 
     const channel = await db.channel.findUnique({where: {id: channelId}})
-
     if (!channel) throw channelException
 
-    const skip: number = getSkip(page, limit)
-
-    let orderBy: any = {date: 'asc'}
-    if (isNew) {
-        orderBy = {date: 'desc'}
-    } else if (isPopular) {
-        orderBy = {views: 'desc'}
-    }
-
-    const [videos, total] = await Promise.all([
-        db.video.findMany({
-            where: {channelId},
-            skip,
-            take: limit,
-            orderBy,
-            select: {
-                id: true,
-                name: true,
-                createdAt: true,
-                duration: true,
-                viewsCount: true,
-                url: true,
-                channel: {
-                    select: {
-                        id: true,
-                        name: true,
-                        avatarUrl: true,
-                    }
-                },
-                previewUrl: true,
-                savedTimes: {
-                    where: {
-                        userId: currentUserId ?? -1
-                    },
-                    select: {
-                        time: true
-                    }
-                }
-            }
-        }),
-        db.video.count({where: {channelId}})
-    ])
-
-    const formattedVideos = videos.map((video: any) => ({
-        ...video,
-        saved_time: video.savedTimes?.[0]?.time ?? null,
-        savedTimes: undefined
-    }))
+    const {videos, total, skip} = await getChannelVideos(
+        channelId,
+        page,
+        limit,
+        isNew,
+        isPopular,
+        currentUserId
+    )
 
     res.json({
-        videos: formattedVideos,
+        videos,
         total,
         page,
         limit,

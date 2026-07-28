@@ -5,71 +5,8 @@ import {db} from "../db.js";
 import { asyncHandler } from '../utils/asyncHandler.js';
 import {getSkip} from "../composables/useGetSkip.js";
 import {getUser} from "../utils/auth.js";
-import {videoException} from "../utils/httpExceptions.js";
 
 export const historyRouter = Router();
-
-const setToHistoryParamsSchema = z.object({
-    video_id: z.string().transform(Number),
-})
-historyRouter.post('/set/:video_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { video_id: videoId } = setToHistoryParamsSchema.parse(req.params)
-    const currentUserId = req.user!.id
-
-    const video = await db.video.findUnique({where: {id: videoId}})
-    if (!video) throw videoException
-
-    const historyEntry = await db.history.findUnique({
-        where: {
-            userId_videoId: {
-                userId: currentUserId,
-                videoId
-            }
-        }
-    })
-
-    if (historyEntry) {
-        await db.history.update({
-            where: {
-                id: historyEntry.id
-            },
-            data: {
-                date: new Date(),
-            }
-        })
-    } else {
-        await db.history.create({
-            data: {
-                userId: currentUserId,
-                videoId,
-            }
-        })
-
-        const total = await db.history.count({where: {userId: currentUserId}})
-        if (total > 100) {
-            const oldestHistoryItem = await db.history.findFirst({
-                where: {
-                    userId: currentUserId,
-                },
-                orderBy: {date: 'asc'},
-                select: {
-                    id: true,
-                }
-            })
-            if (oldestHistoryItem) {
-                await db.history.delete({
-                    where: {
-                        id: oldestHistoryItem.id
-                    }
-                })
-            }
-        }
-    }
-
-    res.json({
-        success: true,
-    })
-}))
 
 const getHistoryQuerySchema = z.object({
     page: z.string().optional().default('1').transform(Number),

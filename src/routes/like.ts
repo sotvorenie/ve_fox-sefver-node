@@ -72,30 +72,6 @@ likesRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request, res:
     })
 }))
 
-const isLikedParamsSchema = z.object({
-    video_id: z.string().transform(Number),
-})
-likesRouter.get('/is_liked/:video_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { video_id: videoId } = isLikedParamsSchema.parse(req.params)
-    const currentUserId = req.user!.id
-
-    const existingLike = await db.like.findUnique({
-        where: {
-            userId_videoId: {
-                userId: currentUserId,
-                videoId
-            }
-        },
-        select: {
-            id: true
-        }
-    })
-
-    res.json({
-        is_liked: !!existingLike
-    })
-}))
-
 const getLikesQuerySchema = z.object({
     page: z.string().optional().default('1').transform(Number),
     limit: z.string().optional().default('21').transform(Number),
