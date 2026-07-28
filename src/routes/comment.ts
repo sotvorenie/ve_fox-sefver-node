@@ -371,7 +371,6 @@ commentsRouter.post('/like/:comment_id', getUser(), asyncHandler(async (req: Req
                 where: {id: commentId},
                 data: {likes: {decrement: 1}}
             })
-            isLiked = false
         } else {
             await tx.commentLike.create({
                 data: {
