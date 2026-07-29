@@ -1,5 +1,6 @@
 import {getSkip} from "../composables/useGetSkip.js";
 import {db} from "../db.js";
+import {videoForListSelect} from "../selects/videoForListSelect.js";
 
 export const modelMap = {
     watchLater: db.watchLater,
@@ -24,32 +25,7 @@ export const getAllVideos = async (
             skip,
             take: limit,
             select: {
-                video: {
-                    select: {
-                        id: true,
-                        name: true,
-                        createdAt: true,
-                        duration: true,
-                        viewsCount: true,
-                        url: true,
-                        previewUrl: true,
-                        channel: {
-                            select: {
-                                id: true,
-                                name: true,
-                                avatarUrl: true,
-                            }
-                        },
-                        savedTimes: {
-                            where: {
-                                userId: userId,
-                            },
-                            select: {
-                                time: true,
-                            }
-                        }
-                    }
-                }
+                video: videoForListSelect(userId)
             }
         }),
         model.count({where: {userId: userId}})
@@ -66,7 +42,6 @@ export const getAllVideos = async (
 
     return {
         videos: formattedVideos,
-        total,
-        skip
+        total
     }
 }

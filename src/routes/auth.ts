@@ -1,6 +1,6 @@
 import { Router, type Request, type Response } from 'express';
-import { z } from 'zod';
 import bcrypt from 'bcryptjs';
+import {z} from "zod";
 import {db} from "../db.js";
 
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -11,9 +11,28 @@ export const authRouter = Router();
 
 const productName: string = process.env.PRODUCT_NAME as string
 
-const registerBodySchema = z.object({
+const authBaseScheme = z.object({
     login: z.string(),
     password: z.string(),
+})
+
+const authResponse = (
+    res: Response,
+    user: { id: number; name: string; password?: string; [key: string]: any },
+) => {
+    const { password, ...userWithoutPassword } = user
+
+    return res.status(201).json({
+        user: {
+            ...userWithoutPassword,
+            router_map: '',
+            search_history: '',
+        },
+        token: createJWTToken(user.id),
+    })
+}
+
+const registerBodySchema = authBaseScheme.extend({
     name: z.string(),
 })
 authRouter.post('/register', asyncHandler(async (req: Request, res: Response) => {
@@ -34,24 +53,11 @@ authRouter.post('/register', asyncHandler(async (req: Request, res: Response) =>
 
     console.log(`Пользователь ${newUser.name} зарегистрировался в приложении ${productName}`)
 
-    const {password: _, ...userWithoutPassword} = newUser
-
-    res.status(201).json({
-        user: {
-            ...userWithoutPassword,
-            router_map: '',
-            search_history: ''
-        },
-        token: createJWTToken(newUser.id),
-    })
+    return authResponse(res, newUser)
 }))
 
-const authBodySchema = z.object({
-    login: z.string(),
-    password: z.string(),
-})
 authRouter.post('/login', asyncHandler(async (req: Request, res: Response) => {
-    const { login, password} = authBodySchema.parse(req.body)
+    const { login, password} = authBaseScheme.parse(req.body)
 
     const user = await db.user.findUnique({where: {login}})
     if (!user) throw authException
@@ -61,21 +67,9 @@ authRouter.post('/login', asyncHandler(async (req: Request, res: Response) => {
 
     console.log(`Пользователь ${user.name} авторизовался в приложении ${productName}`)
 
-    const {password: _, ...userWithoutPassword} = user
-
-    res.status(201).json({
-        user: {
-            ...userWithoutPassword,
-            router_map: '',
-            search_history: ''
-        },
-        token: createJWTToken(user.id),
-    })
+    return authResponse(res, user)
 }))
 
 authRouter.get('/me', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    res.json({
-        user: req.user,
-        token: createJWTToken(req.user!.id),
-    })
+    return authResponse(res, req.user!)
 }))

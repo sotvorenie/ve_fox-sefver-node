@@ -12,8 +12,13 @@ import {duplicationPasswordException, emptyUserDataException, photoFormatExcepti
 import {ALLOWED_PHOTO_SUFFIX, AVATARS_DIRECTORY} from "../config.js";
 import {uploadStorage} from "../composables/useUploadStorage.js";
 import {createUrl} from "../composables/useCreateUrl.js";
+import {successResponse} from "../responses/successResponse.js";
 
 export const userRouter = Router();
+
+const userPasswordSchema = z.object({
+    password: z.string(),
+})
 
 const redactUserNameBodySchema = z.object({
     name: z.string(),
@@ -36,16 +41,11 @@ userRouter.patch('/redact_name', getUser(), asyncHandler(async (req: Request, re
         })
     }
 
-    res.json({
-        success: true,
-    })
+    return successResponse(res)
 }))
 
-const checkUserPasswordBodySchema = z.object({
-    password: z.string(),
-})
 userRouter.post('/check_password', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { password } = checkUserPasswordBodySchema.parse(req.body)
+    const { password } = userPasswordSchema.parse(req.body)
     const currentUser = req.user!
 
     const formattedPassword = password?.trim()
@@ -53,16 +53,11 @@ userRouter.post('/check_password', getUser(), asyncHandler(async (req: Request, 
 
     const check: boolean = await bcrypt.compare(password, currentUser.password)
 
-    res.json({
-        success: check,
-    })
+    return successResponse(res, check)
 }))
 
-const redactUserPasswordBodySchema = z.object({
-    password: z.string(),
-})
 userRouter.patch('/redact_password', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { password } = redactUserPasswordBodySchema.parse(req.body)
+    const { password } = userPasswordSchema.parse(req.body)
     const currentUser = req.user!
 
     const formattedPassword = password?.trim()
@@ -82,9 +77,7 @@ userRouter.patch('/redact_password', getUser(), asyncHandler(async (req: Request
         }
     })
 
-    res.json({
-        success: true,
-    })
+    return successResponse(res)
 }))
 
 const upload = multer({storage: uploadStorage})
@@ -174,7 +167,5 @@ userRouter.post('/set_router_map', getUser(), asyncHandler(async (req: Request, 
         }
     })
 
-    res.json({
-        success: true,
-    })
+    return successResponse(res)
 }))

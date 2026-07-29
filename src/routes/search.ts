@@ -5,6 +5,8 @@ import {db} from "../db.js";
 import { asyncHandler } from '../utils/asyncHandler.js';
 import {getSkip} from "../composables/useGetSkip.js";
 import {getUser} from "../utils/auth.js";
+import {videoForListSelect} from "../selects/videoForListSelect.js";
+import {successResponse} from "../responses/successResponse.js";
 
 export const searchRouter = Router();
 
@@ -79,30 +81,7 @@ searchRouter.get('/', getUser(false), asyncHandler(async (req: Request, res: Res
             where: whereClause,
             skip,
             take: limit,
-            select: {
-                id: true,
-                name: true,
-                createdAt: true,
-                duration: true,
-                viewsCount: true,
-                url: true,
-                previewUrl: true,
-                channel: {
-                    select: {
-                        id: true,
-                        name: true,
-                        avatarUrl: true,
-                    }
-                },
-                savedTimes: {
-                    where: {
-                        userId: currentUserId ?? -1,
-                    },
-                    select: {
-                        time: true,
-                    }
-                }
-            }
+            select: videoForListSelect(currentUserId)
         }),
         db.video.count({where: whereClause})
     ])
@@ -132,9 +111,7 @@ searchRouter.post('/set_history', getUser(), asyncHandler(async (req: Request, r
 
     const formattedSearch = search.trim()
     if (!formattedSearch?.length) {
-        return res.json({
-            success: false,
-        })
+        return successResponse(res, false)
     }
 
     let history: string[] = []
@@ -158,9 +135,7 @@ searchRouter.post('/set_history', getUser(), asyncHandler(async (req: Request, r
         }
     })
 
-    res.json({
-        success: true,
-    })
+    return successResponse(res)
 }))
 
 searchRouter.get('/get_history', getUser(), asyncHandler(async (req: Request, res: Response) => {
@@ -226,7 +201,5 @@ searchRouter.delete('/delete_from_history', getUser(), asyncHandler(async (req: 
         })
     }
 
-    res.json({
-        success: true,
-    })
+    return successResponse(res)
 }))

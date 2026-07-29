@@ -1,5 +1,6 @@
 import {getSkip} from "../composables/useGetSkip.js";
 import {db} from "../db.js";
+import {videoForListSelect} from "../selects/videoForListSelect.js";
 
 export const getChannelVideos = async (
     channelId:number,
@@ -24,30 +25,7 @@ export const getChannelVideos = async (
             skip,
             take: limit,
             orderBy,
-            select: {
-                id: true,
-                name: true,
-                createdAt: true,
-                duration: true,
-                viewsCount: true,
-                url: true,
-                channel: {
-                    select: {
-                        id: true,
-                        name: true,
-                        avatarUrl: true,
-                    }
-                },
-                previewUrl: true,
-                savedTimes: {
-                    where: {
-                        userId: currentUserId ?? -1
-                    },
-                    select: {
-                        time: true
-                    }
-                }
-            }
+            select: videoForListSelect(currentUserId)
         }),
         db.video.count({where: {channelId}})
     ])
@@ -60,7 +38,6 @@ export const getChannelVideos = async (
 
     return {
         videos: formattedVideos,
-        total,
-        skip
+        total
     }
 }

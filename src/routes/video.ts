@@ -7,16 +7,19 @@ import {getSkip} from "../composables/useGetSkip.js";
 import {getUser} from "../utils/auth.js";
 import {videoException} from "../utils/httpExceptions.js";
 import {addVideoToHistory} from "../services/historyService.js";
+import {pageLimitSchema} from "../schemas/pageLimitSchema.js";
+import {videoForListSelect} from "../selects/videoForListSelect.js";
+import {videosListResponse} from "../responses/videosListResponse.js";
+import {videoIdSchema} from "../schemas/videoIdSchema.js";
 
 export const videosRouter = Router();
 
-const getAllVideosQuerySchema = z.object({
-    page: z.string().optional().default('1').transform(Number),
-    limit: z.string().optional().default('21').transform(Number),
+const pageLimitSeedSchema = pageLimitSchema.extend({
     seed: z.string().optional().default('0.5').transform(Number),
 })
+
 videosRouter.get('/all', getUser(false), asyncHandler(async (req: Request, res: Response) => {
-    const { page, limit, seed } = getAllVideosQuerySchema.parse(req.query)
+    const { page, limit, seed } = pageLimitSeedSchema.parse(req.query)
     const currentUserId = req.user?.id
 
     const skip: number = getSkip(page, limit)
@@ -41,30 +44,7 @@ videosRouter.get('/all', getUser(false), asyncHandler(async (req: Request, res: 
             where: {
                 id: {in: randomIds}
             },
-            select: {
-                id: true,
-                name: true,
-                createdAt: true,
-                duration: true,
-                viewsCount: true,
-                url: true,
-                channel: {
-                    select: {
-                        id: true,
-                        name: true,
-                        avatarUrl: true,
-                    }
-                },
-                previewUrl: true,
-                savedTimes: {
-                    where: {
-                        userId: currentUserId ?? -1
-                    },
-                    select: {
-                        time: true
-                    }
-                }
-            }
+            select: videoForListSelect(currentUserId)
         }),
         db.video.count()
     ])
@@ -78,20 +58,11 @@ videosRouter.get('/all', getUser(false), asyncHandler(async (req: Request, res: 
         savedTimes: undefined
     }))
 
-    res.json({
-        videos: formattedVideos,
-        total,
-        page,
-        limit,
-        has_more: (skip + limit) < total,
-    })
+    return videosListResponse(res, formattedVideos, total, page, limit)
 }))
 
-const getVideoParamsSchema = z.object({
-    video_id: z.string().transform(Number),
-})
 videosRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
-    const { video_id: videoId } = getVideoParamsSchema.parse(req.params)
+    const { video_id: videoId } = videoIdSchema.parse(req.params)
     const currentUserId = req.user?.id
 
     if (currentUserId) addVideoToHistory(currentUserId, videoId).then()
@@ -171,13 +142,9 @@ videosRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Request,
 const getAllVideosFromSectionParamsSchema = z.object({
     section_id: z.string().transform(Number),
 })
-const getAllVideosFromSectionQuerySchema = z.object({
-    page: z.string().optional().default('1').transform(Number),
-    limit: z.string().optional().default('21').transform(Number),
-})
 videosRouter.get('/section/:section_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
     const { section_id: sectionId } = getAllVideosFromSectionParamsSchema.parse(req.params)
-    const { page, limit } = getAllVideosFromSectionQuerySchema.parse(req.query)
+    const { page, limit } = pageLimitSchema.parse(req.query)
     const currentUserId = req.user?.id
 
     const skip: number = getSkip(page, limit)
@@ -189,30 +156,7 @@ videosRouter.get('/section/:section_id', getUser(false), asyncHandler(async (req
             },
             skip,
             take: limit,
-            select: {
-                id: true,
-                name: true,
-                createdAt: true,
-                duration: true,
-                viewsCount: true,
-                url: true,
-                channel: {
-                    select: {
-                        id: true,
-                        name: true,
-                        avatarUrl: true,
-                    }
-                },
-                previewUrl: true,
-                savedTimes: {
-                    where: {
-                        userId: currentUserId ?? -1
-                    },
-                    select: {
-                        time: true
-                    }
-                }
-            }
+            select: videoForListSelect(currentUserId)
         }),
         db.video.count({where: {sectionId}})
     ])
@@ -223,26 +167,12 @@ videosRouter.get('/section/:section_id', getUser(false), asyncHandler(async (req
         savedTimes: undefined
     }))
 
-    res.json({
-        videos: formattedVideos,
-        total,
-        page,
-        limit,
-        has_more: (skip + limit) < total,
-    })
+    return videosListResponse(res, formattedVideos, total, page, limit)
 }))
 
-const getRecommendedVideosParamsSchema = z.object({
-    video_id: z.string().transform(Number),
-})
-const getRecommendedVideosQuerySchema = z.object({
-    page: z.string().optional().default('1').transform(Number),
-    limit: z.string().optional().default('21').transform(Number),
-    seed: z.string().optional().default('0.5').transform(Number),
-})
 videosRouter.get('/recommended/:video_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
-    const { video_id: videoId } = getRecommendedVideosParamsSchema.parse(req.params)
-    const { page, limit, seed } = getRecommendedVideosQuerySchema.parse(req.query)
+    const { video_id: videoId } = videoIdSchema.parse(req.params)
+    const { page, limit, seed } = pageLimitSeedSchema.parse(req.query)
     const currentUserId = req.user?.id
 
     const video = await db.video.findUnique({
@@ -360,11 +290,5 @@ videosRouter.get('/recommended/:video_id', getUser(false), asyncHandler(async (r
         savedTimes: undefined
     }))
 
-    res.json({
-        videos: formattedVideos,
-        total,
-        page,
-        limit,
-        has_more: (skip + limit) < total
-    })
+    return videosListResponse(res, formattedVideos, total, page, limit)
 }))

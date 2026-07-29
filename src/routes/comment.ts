@@ -6,19 +6,22 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import {getSkip} from "../composables/useGetSkip.js";
 import {getUser} from "../utils/auth.js";
 import {noCommentException, notMyCommentException} from "../utils/httpExceptions.js";
+import {videoIdSchema} from "../schemas/videoIdSchema.js";
+import {pageLimitSchema} from "../schemas/pageLimitSchema.js";
+import {channelForListOrUserSelect} from "../selects/channelForListOrUserSelect.js";
+import {successResponse} from "../responses/successResponse.js";
 
 export const commentsRouter = Router();
 
-const getVideoCommentsParamsSchema = z.object({
-    video_id: z.string().transform(Number),
+const commentIdSchema = z.object({
+    comment_id: z.string().transform(Number),
 })
-const getVideoCommentsQuerySchema = z.object({
-    page: z.string().optional().default('1').transform(Number),
-    limit: z.string().optional().default('21').transform(Number),
+
+const getVideoCommentsQuerySchema = pageLimitSchema.extend({
     is_new: z.string().optional().default('true').transform(Boolean),
 })
 commentsRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
-    const { video_id: videoId } = getVideoCommentsParamsSchema.parse(req.params)
+    const { video_id: videoId } = videoIdSchema.parse(req.params)
     const { page, limit, is_new: isNew } = getVideoCommentsQuerySchema.parse(req.query)
     const currentUserId = req.user?.id
 
@@ -40,11 +43,7 @@ commentsRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Reques
                 likes: true,
                 isRedacted: true,
                 user: {
-                    select: {
-                        id: true,
-                        name: true,
-                        avatarUrl: true,
-                    }
+                    select: channelForListOrUserSelect
                 },
                 _count: {
                     select: {
@@ -81,11 +80,8 @@ commentsRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Reques
     })
 }))
 
-const getVideoPopularCommentParamsSchema = z.object({
-    video_id: z.string().transform(Number),
-})
 commentsRouter.get('/popular/:video_id', asyncHandler(async (req: Request, res: Response) => {
-    const { video_id: videoId } = getVideoPopularCommentParamsSchema.parse(req.params)
+    const { video_id: videoId } = videoIdSchema.parse(req.params)
 
     const [comment, total] = await Promise.all([
         db.comment.findFirst({
@@ -102,11 +98,7 @@ commentsRouter.get('/popular/:video_id', asyncHandler(async (req: Request, res: 
                 likes: true,
                 isRedacted: true,
                 user: {
-                    select: {
-                        id: true,
-                        name: true,
-                        avatarUrl: true,
-                    }
+                    select: channelForListOrUserSelect
                 }
             }
         }),
@@ -125,16 +117,9 @@ commentsRouter.get('/popular/:video_id', asyncHandler(async (req: Request, res: 
     })
 }))
 
-const getVideoCommentAnswersParamsSchema = z.object({
-    comment_id: z.string().transform(Number),
-})
-const getVideoCommentAnswersQuerySchema = z.object({
-    page: z.string().optional().default('1').transform(Number),
-    limit: z.string().optional().default('21').transform(Number),
-})
 commentsRouter.get('/answers/:comment_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
-    const { comment_id: commentId } = getVideoCommentAnswersParamsSchema.parse(req.params)
-    const { page, limit } = getVideoCommentAnswersQuerySchema.parse(req.query)
+    const { comment_id: commentId } = commentIdSchema.parse(req.params)
+    const { page, limit } = pageLimitSchema.parse(req.query)
     const currentUserId = req.user?.id
 
     const skip: number = getSkip(page, limit)
@@ -154,11 +139,7 @@ commentsRouter.get('/answers/:comment_id', getUser(false), asyncHandler(async (r
                 isRedacted: true,
                 likes: true,
                 user: {
-                    select: {
-                        id: true,
-                        name: true,
-                        avatarUrl: true,
-                    }
+                    select: channelForListOrUserSelect
                 },
                 _count: {
                     select: {
@@ -195,15 +176,12 @@ commentsRouter.get('/answers/:comment_id', getUser(false), asyncHandler(async (r
     })
 }))
 
-const addCommentParamsSchema = z.object({
-    video_id: z.string().transform(Number),
-})
 const addCommentBodySchema = z.object({
     text: z.string(),
     parent_id: z.union([z.string(), z.number()]).nullish().transform(val => val ? Number(val) : null)
 })
 commentsRouter.post('/add/:video_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { video_id: videoId } = addCommentParamsSchema.parse(req.params)
+    const { video_id: videoId } = videoIdSchema.parse(req.params)
     const { text, parent_id: parentId } = addCommentBodySchema.parse(req.body)
     const currentUserId = req.user!.id
 
@@ -226,11 +204,7 @@ commentsRouter.post('/add/:video_id', getUser(), asyncHandler(async (req: Reques
             isRedacted: true,
             parentId: true,
             user: {
-                select: {
-                    id: true,
-                    name: true,
-                    avatarUrl: true,
-                }
+                select: channelForListOrUserSelect
             }
         }
     })
@@ -244,14 +218,11 @@ commentsRouter.post('/add/:video_id', getUser(), asyncHandler(async (req: Reques
     res.json(formattedComment)
 }))
 
-const redactCommentParamsSchema = z.object({
-    comment_id: z.string().transform(Number),
-})
 const redactCommentBodySchema = z.object({
     text: z.string(),
 })
 commentsRouter.patch('/redact/:comment_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { comment_id: commentId } = redactCommentParamsSchema.parse(req.params)
+    const { comment_id: commentId } = commentIdSchema.parse(req.params)
     const { text } = redactCommentBodySchema.parse(req.body)
     const currentUserId = req.user!.id
 
@@ -281,11 +252,7 @@ commentsRouter.patch('/redact/:comment_id', getUser(), asyncHandler(async (req: 
             isRedacted: true,
             likes: true,
             user: {
-                select: {
-                    id: true,
-                    name: true,
-                    avatarUrl: true,
-                }
+                select: channelForListOrUserSelect
             },
             _count: {
                 select: {
@@ -304,11 +271,8 @@ commentsRouter.patch('/redact/:comment_id', getUser(), asyncHandler(async (req: 
     res.json(formattedComment)
 }))
 
-const deleteCommentParamsSchema = z.object({
-    comment_id: z.string().transform(Number),
-})
 commentsRouter.delete('/delete/:comment_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { comment_id: commentId } = deleteCommentParamsSchema.parse(req.params)
+    const { comment_id: commentId } = commentIdSchema.parse(req.params)
     const currentUserId = req.user!.id
 
     const comment = await db.comment.findUnique({
@@ -326,16 +290,11 @@ commentsRouter.delete('/delete/:comment_id', getUser(), asyncHandler(async (req:
         }
     })
 
-    res.json({
-        success: true,
-    })
+    return successResponse(res)
 }))
 
-const likeCommentParamsSchema = z.object({
-    comment_id: z.string().transform(Number),
-})
 commentsRouter.post('/like/:comment_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { comment_id: commentId } = likeCommentParamsSchema.parse(req.params)
+    const { comment_id: commentId } = commentIdSchema.parse(req.params)
     const currentUserId = req.user!.id
 
     const comment = await db.comment.findUnique({

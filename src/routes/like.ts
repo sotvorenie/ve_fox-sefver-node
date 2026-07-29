@@ -1,38 +1,27 @@
 import { Router, type Request, type Response } from 'express';
-import { z } from 'zod';
 import {db} from "../db.js";
 
 import { asyncHandler } from '../utils/asyncHandler.js';
 import {getUser} from "../utils/auth.js";
 import {videoException} from "../utils/httpExceptions.js";
 import {getAllVideos, modelMap} from "../services/getAllVideosService.js";
+import {videosListResponse} from "../responses/videosListResponse.js";
+import {pageLimitSchema} from "../schemas/pageLimitSchema.js";
+import {videoIdSchema} from "../schemas/videoIdSchema.js";
 
 export const likesRouter = Router();
 
-const getLikesQuerySchema = z.object({
-    page: z.string().optional().default('1').transform(Number),
-    limit: z.string().optional().default('21').transform(Number),
-})
 likesRouter.get('/all', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { page, limit } = getLikesQuerySchema.parse(req.query)
+    const { page, limit } = pageLimitSchema.parse(req.query)
     const currentUserId = req.user!.id
 
-    const {videos, total, skip} = await getAllVideos(modelMap.like, currentUserId, page, limit)
+    const {videos, total} = await getAllVideos(modelMap.like, currentUserId, page, limit)
 
-    res.json({
-        videos,
-        total,
-        page,
-        limit,
-        has_more: (skip + limit) < total,
-    })
+    return videosListResponse(res, videos, total, page, limit )
 }))
 
-const likeParamsSchema = z.object({
-    video_id: z.string().transform(Number),
-})
 likesRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { video_id: videoId } = likeParamsSchema.parse(req.params)
+    const { video_id: videoId } = videoIdSchema.parse(req.params)
     const currentUserId = req.user!.id
 
     const video = await db.video.findUnique({where: {id: videoId}})
