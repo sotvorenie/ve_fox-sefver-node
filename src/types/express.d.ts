@@ -3,9 +3,9 @@ export interface User {
     name: string
     login: string
     password: string
-    avatar_url?: string | null
-    router_map?: string | null
-    search_history?: string | null
+    avatarUrl?: string | null
+    routerMap?: string | null
+    searchHistory?: string | null
 }
 
 declare global {

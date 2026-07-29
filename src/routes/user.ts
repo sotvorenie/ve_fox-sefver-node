@@ -9,7 +9,7 @@ import {db} from "../db.js";
 import { asyncHandler } from '../utils/asyncHandler.js';
 import {getUser} from "../utils/auth.js";
 import {duplicationPasswordException, emptyUserDataException, photoFormatException} from "../utils/httpExceptions.js";
-import {ALLOWED_PHOTO_SUFFIX, AVATARS_DIRECTORY} from "../config.js";
+import {ALLOWED_PHOTO_SUFFIX, AVATARS_DIRECTORY, BASE_STORAGE_DIR} from "../config.js";
 import {uploadStorage} from "../composables/useUploadStorage.js";
 import {createUrl} from "../composables/useCreateUrl.js";
 import {successResponse} from "../responses/successResponse.js";
@@ -116,9 +116,19 @@ userRouter.post(
                 }
             })
 
-            if (currentUser.avatar_url) {
-                const oldAvatarPath = path.join(AVATARS_DIRECTORY, currentUser.avatar_url)
-                await fs.unlink(oldAvatarPath).catch()
+            if (currentUser.avatarUrl) {
+                const oldAvatarName = currentUser.avatarUrl.replace('/static/', '')
+                const oldAvatarPath = path.join(BASE_STORAGE_DIR, oldAvatarName)
+
+                try {
+                    await fs.unlink(oldAvatarPath).catch()
+                } catch (err: any) {
+                    if (err.code === 'ENOENT') {
+                        console.log('Старый файл аватарки не найден, пропускаем удаление')
+                    } else {
+                        console.error('Ошибка при удалении аватарки:', err)
+                    }
+                }
             }
 
             res.json({
