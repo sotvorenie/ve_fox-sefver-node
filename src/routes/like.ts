@@ -76,6 +76,6 @@ likesRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request, res:
     })
 
     res.json({
-        is_liked: isLiked
+        isLiked: isLiked
     })
 }))

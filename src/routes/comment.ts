@@ -65,8 +65,8 @@ commentsRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Reques
 
     const formattedComments = comments.map(comment => ({
         ...comment,
-        question_comments_count: comment._count.replies,
-        is_liked: comment.commentLikes.length > 0,
+        questionCommentsCount: comment._count.replies,
+        isLiked: comment.commentLikes.length > 0,
         _count: undefined,
         commentLikes: undefined
     }))
@@ -76,7 +76,7 @@ commentsRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Reques
         total,
         page,
         limit,
-        has_more: (skip + limit) < total,
+        hasMore: (skip + limit) < total,
     })
 }))
 
@@ -107,8 +107,8 @@ commentsRouter.get('/popular/:video_id', asyncHandler(async (req: Request, res: 
 
     const formattedComment = {
         ...comment,
-        question_comments_count: 0,
-        is_liked: false,
+        questionCommentsCount: 0,
+        isLiked: false,
     }
 
     res.json({
@@ -162,7 +162,7 @@ commentsRouter.get('/answers/:comment_id', getUser(false), asyncHandler(async (r
     const formattedComments = comments.map(comment => ({
         ...comment,
         question_comments_count: comment._count.replies,
-        is_liked: comment.commentLikes.length > 0,
+        isLiked: comment.commentLikes.length > 0,
         _count: undefined,
         commentLikes: undefined,
     }))
@@ -172,7 +172,7 @@ commentsRouter.get('/answers/:comment_id', getUser(false), asyncHandler(async (r
         total,
         page,
         limit,
-        has_more: (skip + limit) < total,
+        hasMore: (skip + limit) < total,
     })
 }))
 
@@ -202,7 +202,6 @@ commentsRouter.post('/add/:video_id', getUser(), asyncHandler(async (req: Reques
             date: true,
             likes: true,
             isRedacted: true,
-            parentId: true,
             user: {
                 select: channelForListOrUserSelect
             }
@@ -211,8 +210,8 @@ commentsRouter.post('/add/:video_id', getUser(), asyncHandler(async (req: Reques
 
     const formattedComment = {
         ...newComment,
-        question_comments_count: 0,
-        is_liked: false,
+        questionCommentsCount: 0,
+        isLiked: false,
     }
 
     res.json(formattedComment)
@@ -264,8 +263,8 @@ commentsRouter.patch('/redact/:comment_id', getUser(), asyncHandler(async (req: 
 
     const formattedComment = {
         ...updatedComment,
-        question_comments_count: updatedComment._count.replies,
-        is_liked: false,
+        questionCommentsCount: updatedComment._count.replies,
+        isLiked: false,
     }
 
     res.json(formattedComment)
@@ -346,6 +345,6 @@ commentsRouter.post('/like/:comment_id', getUser(), asyncHandler(async (req: Req
     })
 
     res.json({
-        is_liked: isLiked
+        isLiked
     })
 }))

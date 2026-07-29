@@ -25,7 +25,9 @@ export const getAllVideos = async (
             skip,
             take: limit,
             select: {
-                video: videoForListSelect(userId)
+                video: {
+                    select: videoForListSelect(userId)
+                }
             }
         }),
         model.count({where: {userId: userId}})
@@ -35,7 +37,7 @@ export const getAllVideos = async (
         const video = item.video
         return {
             ...video,
-            saved_time: video.savedTimes?.[0]?.time ?? null,
+            savedTime: video.savedTimes?.[0]?.time ?? null,
             savedTimes: undefined
         }
     })

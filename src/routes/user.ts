@@ -122,7 +122,7 @@ userRouter.post(
             }
 
             res.json({
-                new_avatar_url: newAvatarUrl,
+                newAvatarUrl,
             })
         } catch (err) {
             if (targetAvatarPath) await fs.unlink(targetAvatarPath).catch()
@@ -147,7 +147,7 @@ userRouter.get('/get_router_map', getUser(), asyncHandler(async (req: Request, r
     })
 
     res.json({
-        router_map: user?.routerMap ?? null
+        routerMap: user?.routerMap ?? null
     })
 }))
 

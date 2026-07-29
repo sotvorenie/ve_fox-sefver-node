@@ -54,7 +54,7 @@ videosRouter.get('/all', getUser(false), asyncHandler(async (req: Request, res: 
 
     const [_, randomRowsResult] = await db.$transaction([
         db.$executeRaw`SELECT setseed(${seed})`,
-        db.$queryRaw`SELECT id FROM "Video" ORDER BY RANDOM() LIMIT ${limit} OFFSET ${skip}`
+        db.$queryRaw`SELECT id FROM "videos" ORDER BY RANDOM() LIMIT ${limit} OFFSET ${skip}`
     ]) as [unknown, { id: number }[]]
     const randomIds = randomRowsResult.map(r => r.id)
     if (randomIds.length === 0) {
@@ -63,7 +63,7 @@ videosRouter.get('/all', getUser(false), asyncHandler(async (req: Request, res: 
             total: 0,
             page,
             limit,
-            has_more: false,
+            hasMore: false,
         })
     }
 
@@ -82,7 +82,7 @@ videosRouter.get('/all', getUser(false), asyncHandler(async (req: Request, res: 
 
     const formattedVideos = videos.map(video => ({
         ...video,
-        saved_time: video?.savedTimes?.[0]?.time ?? null,
+        savedTime: video?.savedTimes?.[0]?.time ?? null,
         savedTimes: undefined
     }))
 
@@ -155,12 +155,12 @@ videosRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Request,
     if (!videoFromDB) throw videoException
 
     const video = {
-        ...videoFromDB,
-        saved_time: videoFromDB?.savedTimes?.[0]?.time ?? null,
+        video: videoFromDB,
+        savedTime: videoFromDB?.savedTimes?.[0]?.time ?? null,
         savedTimes: undefined,
-        is_liked: !!videoFromDB?.likes?.length,
+        isLiked: !!videoFromDB?.likes?.length,
         likes: undefined,
-        is_watch_later: !!videoFromDB?.watchLater?.length,
+        isWatchLater: !!videoFromDB?.watchLater?.length,
         watchLater: undefined,
     }
 
@@ -191,7 +191,7 @@ videosRouter.get('/section/:section_id', getUser(false), asyncHandler(async (req
 
     const formattedVideos = videos.map(video => ({
         ...video,
-        saved_time: video.savedTimes?.[0]?.time ?? null,
+        savedTime: video.savedTimes?.[0]?.time ?? null,
         savedTimes: undefined
     }))
 
@@ -285,7 +285,7 @@ videosRouter.get('/recommended/:video_id', getUser(false), asyncHandler(async (r
         const [_, randomRowsResult] = await db.$transaction([
             db.$executeRaw`SELECT setseed(${seed})`,
             db.$queryRaw`
-                SELECT id FROM "Video" 
+                SELECT id FROM "videos" 
                 WHERE id <> ALL(${Array.from(usedIds)})
                 ORDER BY RANDOM() 
                 LIMIT ${needed} OFFSET ${skip}
@@ -314,7 +314,7 @@ videosRouter.get('/recommended/:video_id', getUser(false), asyncHandler(async (r
 
     const formattedVideos = finalVideos.map(video => ({
         ...video,
-        saved_time: video.savedTimes?.[0]?.time ?? null,
+        savedTime: video.savedTimes?.[0]?.time ?? null,
         savedTimes: undefined
     }))
 

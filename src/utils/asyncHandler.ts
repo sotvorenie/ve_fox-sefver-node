@@ -18,7 +18,7 @@ export const asyncHandler = (fn: Function) => {
             }
 
             if (err.status && err.detail) {
-                return res.status(err.status).json({ error: err.detail });
+                return res.status(err.status).json({ detail: err.detail });
             }
 
             res.status(dbException.status).json({ error: dbException.detail });

@@ -15,6 +15,6 @@ export const videosListResponse = (
         total,
         page,
         limit,
-        has_more: (skip + limit) < total,
+        hasMore: (skip + limit) < total,
     })
 }

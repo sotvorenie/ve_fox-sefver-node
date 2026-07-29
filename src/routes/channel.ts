@@ -25,11 +25,11 @@ const getChannelVideos = async (
 ) => {
     const skip: number = getSkip(page, limit)
 
-    let orderBy: any = {date: 'asc'}
+    let orderBy: any = {createdAt: 'asc'}
     if (isNew) {
-        orderBy = {date: 'desc'}
+        orderBy = {createdAt: 'desc'}
     } else if (isPopular) {
-        orderBy = {views: 'desc'}
+        orderBy = {viewsCount: 'desc'}
     }
 
     const [videos, total] = await Promise.all([
@@ -45,13 +45,16 @@ const getChannelVideos = async (
 
     const formattedVideos = videos.map((video: any) => ({
         ...video,
-        saved_time: video.savedTimes?.[0]?.time ?? null,
+        savedTime: video.savedTimes?.[0]?.time ?? null,
         savedTimes: undefined
     }))
 
     return {
         videos: formattedVideos,
-        total
+        total,
+        page,
+        limit,
+        hasMore: (skip + limit) < total,
     }
 }
 
@@ -83,7 +86,7 @@ channelRouter.get('/:channel_id', getUser(false), asyncHandler(async (req: Reque
                 createdAt: true,
             }
         }),
-        getChannelVideos(channelId, 1, 8, true, false, currentUserId),
+        getChannelVideos(channelId, 1, 21, true, false, currentUserId),
         getChannelVideos(channelId, 1, 8, false, true, currentUserId)
     ])
 
@@ -91,8 +94,8 @@ channelRouter.get('/:channel_id', getUser(false), asyncHandler(async (req: Reque
 
     res.json({
         channel,
-        new_videos: newVideosData.videos,
-        popular_videos: popularVideosData.videos,
+        newVideos: newVideosData,
+        popularVideos: popularVideosData.videos,
     })
 }))
 

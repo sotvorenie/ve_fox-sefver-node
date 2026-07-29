@@ -25,8 +25,8 @@ const authResponse = (
     return res.status(201).json({
         user: {
             ...userWithoutPassword,
-            router_map: '',
-            search_history: '',
+            routerMap: '',
+            searchHistory: '',
         },
         token: createJWTToken(user.id),
     })

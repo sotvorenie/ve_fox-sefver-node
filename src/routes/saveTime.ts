@@ -63,24 +63,3 @@ saveTimesRouter.delete('/delete/:video_id', getUser(), asyncHandler(async (req: 
 
     return successResponse(res)
 }))
-
-saveTimesRouter.get('/get/:video_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { video_id: videoId } = videoIdSchema.parse(req.params)
-    const currentUserId = req.user!.id
-
-    const savedTime = await db.savedTime.findUnique({
-        where: {
-            userId_videoId: {
-                userId: currentUserId,
-                videoId
-            }
-        },
-        select: {
-            time: true,
-        }
-    })
-
-    res.json({
-        time: savedTime?.time ?? null
-    })
-}))

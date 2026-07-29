@@ -88,7 +88,7 @@ searchRouter.get('/', getUser(false), asyncHandler(async (req: Request, res: Res
 
     const formattedVideos = videos.map(video => ({
         ...video,
-        saved_time: video.savedTimes?.[0]?.time ?? null,
+        savedTime: video.savedTimes?.[0]?.time ?? null,
         savedTimes: undefined
     }))
 
@@ -98,7 +98,7 @@ searchRouter.get('/', getUser(false), asyncHandler(async (req: Request, res: Res
         total: total,
         page,
         limit,
-        has_more: (skip + limit) < total,
+        hasMore: (skip + limit) < total,
     })
 }))
 
@@ -160,7 +160,7 @@ searchRouter.get('/get_history', getUser(), asyncHandler(async (req: Request, re
     }
 
     res.json({
-        search_history: history,
+        searchHistory: history,
     })
 }))
 
