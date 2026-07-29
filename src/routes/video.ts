@@ -6,7 +6,6 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import {getSkip} from "../composables/useGetSkip.js";
 import {getUser} from "../utils/auth.js";
 import {videoException} from "../utils/httpExceptions.js";
-import {addVideoToHistory} from "../services/historyService.js";
 import {pageLimitSchema} from "../schemas/pageLimitSchema.js";
 import {videoForListSelect} from "../selects/videoForListSelect.js";
 import {videosListResponse} from "../responses/videosListResponse.js";
@@ -17,6 +16,35 @@ export const videosRouter = Router();
 const pageLimitSeedSchema = pageLimitSchema.extend({
     seed: z.string().optional().default('0.5').transform(Number),
 })
+
+const addVideoToHistory = async (userId: number, videoId: number) => {
+    const historyEntry = await db.history.findUnique({
+        where: { userId_videoId: { userId, videoId } }
+    })
+
+    if (historyEntry) {
+        await db.history.update({
+            where: { id: historyEntry.id },
+            data: { date: new Date() }
+        })
+    } else {
+        await db.history.create({
+            data: { userId, videoId }
+        })
+
+        const total = await db.history.count({ where: { userId } })
+        if (total > 100) {
+            const oldest = await db.history.findFirst({
+                where: { userId },
+                orderBy: { date: 'asc' },
+                select: { id: true }
+            })
+            if (oldest) {
+                await db.history.delete({ where: { id: oldest.id } })
+            }
+        }
+    }
+}
 
 videosRouter.get('/all', getUser(false), asyncHandler(async (req: Request, res: Response) => {
     const { page, limit, seed } = pageLimitSeedSchema.parse(req.query)

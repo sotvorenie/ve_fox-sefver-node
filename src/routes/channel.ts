@@ -5,14 +5,55 @@ import {db} from "../db.js";
 import { asyncHandler } from '../utils/asyncHandler.js';
 import {channelException, duplicationSectionException} from "../utils/httpExceptions.js";
 import {getUser} from "../utils/auth.js";
-import {getChannelVideos} from "../services/channelService.js";
 import {channelForListOrUserSelect} from "../selects/channelForListOrUserSelect.js";
 import {channelIdSchema} from "../schemas/channelIdSchema.js";
 import {videosListResponse} from "../responses/videosListResponse.js";
 import {pageLimitSchema} from "../schemas/pageLimitSchema.js";
 import {successResponse} from "../responses/successResponse.js";
+import {getSkip} from "../composables/useGetSkip.js";
+import {videoForListSelect} from "../selects/videoForListSelect.js";
 
 export const channelRouter = Router();
+
+const getChannelVideos = async (
+    channelId:number,
+    page: number = 1,
+    limit: number = 21,
+    isNew: boolean = true,
+    isPopular: boolean = false,
+    currentUserId?:number
+) => {
+    const skip: number = getSkip(page, limit)
+
+    let orderBy: any = {date: 'asc'}
+    if (isNew) {
+        orderBy = {date: 'desc'}
+    } else if (isPopular) {
+        orderBy = {views: 'desc'}
+    }
+
+    const [videos, total] = await Promise.all([
+        db.video.findMany({
+            where: {channelId},
+            skip,
+            take: limit,
+            orderBy,
+            select: videoForListSelect(currentUserId)
+        }),
+        db.video.count({where: {channelId}})
+    ])
+
+    const formattedVideos = videos.map((video: any) => ({
+        ...video,
+        saved_time: video.savedTimes?.[0]?.time ?? null,
+        savedTimes: undefined
+    }))
+
+    return {
+        videos: formattedVideos,
+        total
+    }
+}
 
 channelRouter.get('/all', asyncHandler(async (_: Request, res: Response) => {
     const [channels, total] = await Promise.all([
