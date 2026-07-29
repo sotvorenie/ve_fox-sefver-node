@@ -21,21 +21,21 @@ export const getUser = (required: boolean = true) => {
             return next()
         }
 
-        const token = authHeader.split(' ')[1]
+        const token = authHeader.split(' ')[1] as string
+        let payload: { sub: string }
 
         try {
-            const payload = jwt.verify(token as string, SECRET_KEY) as { sub: string }
-
-            const user = await db.user.findUnique({
-                where: { id: Number(payload.sub) }
-            })
-
-            if (!user) throw jwtException;
-
-            (req as any).user = user
-            next()
+            payload = jwt.verify(token, SECRET_KEY) as { sub: string }
         } catch {
             throw jwtException
         }
+
+        const user = await db.user.findUnique({
+            where: { id: Number(payload.sub) }
+        })
+        if (!user && required) throw jwtException
+
+        if (user) req.user = user
+        next()
     })
 }
