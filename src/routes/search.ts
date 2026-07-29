@@ -115,9 +115,9 @@ searchRouter.post('/set_history', getUser(), asyncHandler(async (req: Request, r
     }
 
     let history: string[] = []
-    if (currentUser?.search_history) {
+    if (currentUser?.searchHistory) {
         try {
-            history = JSON.parse(currentUser.search_history)
+            history = JSON.parse(currentUser.searchHistory)
         } catch {
             history = []
         }
