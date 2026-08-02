@@ -4,9 +4,9 @@ services:
     container_name: vefox_db
     restart: always
     environment:
-      POSTGRES_USER: {DATABASE_USER}
-      POSTGRES_PASSWORD: {DATABASE_PASSWORD}
-      POSTGRES_DB: {DATABASE_DATABASE}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_DATABASE}
     ports:
       - "5432:5432"
     volumes:
