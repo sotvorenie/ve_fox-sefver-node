@@ -51,7 +51,7 @@ userRouter.patch('/redact_password', getUser(), asyncHandler(async (req: Request
     const formattedPassword = password?.trim()
     if (!formattedPassword) throw emptyUserDataException
 
-    const check: boolean = await bcrypt.compare(password, currentUser.password)
+    const check: boolean = await bcrypt.compare(formattedPassword, currentUser.password)
     if (check) throw duplicationPasswordException
 
     const newPassword = await bcrypt.hash(password, 10)
