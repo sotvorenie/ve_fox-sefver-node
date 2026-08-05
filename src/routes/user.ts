@@ -109,7 +109,7 @@ userRouter.post(
                 const oldAvatarPath = path.join(BASE_STORAGE_DIR, oldAvatarName)
 
                 try {
-                    await fs.unlink(oldAvatarPath).catch()
+                    await fs.unlink(oldAvatarPath)
                 } catch (err: any) {
                     if (err.code === 'ENOENT') {
                         console.log('Старый файл аватарки не найден, пропускаем удаление')
