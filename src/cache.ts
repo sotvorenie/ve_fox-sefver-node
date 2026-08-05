@@ -104,8 +104,7 @@ export class DataSynchronizer {
 
             const videoTags: string[] = getTagsByTitle(videoName)
 
-            let dbVideo = this.videosFromDB.get(videoUrl)
-            if (dbVideo) {
+            if (this.videosFromDB.has(videoUrl)) {
                 await db.video.update({
                     where: {
                         url: videoUrl,
