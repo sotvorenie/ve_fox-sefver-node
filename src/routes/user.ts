@@ -44,18 +44,6 @@ userRouter.patch('/redact_name', getUser(), asyncHandler(async (req: Request, re
     return successResponse(res)
 }))
 
-userRouter.post('/check_password', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { password } = userPasswordSchema.parse(req.body)
-    const currentUser = req.user!
-
-    const formattedPassword = password?.trim()
-    if (!formattedPassword) throw emptyUserDataException
-
-    const check: boolean = await bcrypt.compare(password, currentUser.password)
-
-    return successResponse(res, check)
-}))
-
 userRouter.patch('/redact_password', getUser(), asyncHandler(async (req: Request, res: Response) => {
     const { password } = userPasswordSchema.parse(req.body)
     const currentUser = req.user!
