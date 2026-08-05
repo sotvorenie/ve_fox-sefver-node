@@ -120,7 +120,7 @@ userRouter.post(
             }
 
             res.json({
-                newAvatarUrl,
+                newAvatarUrl: newAvatarUrl,
             })
         } catch (err) {
             if (targetAvatarPath) await fs.unlink(targetAvatarPath).catch()
