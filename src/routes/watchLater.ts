@@ -5,20 +5,13 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import {getUser} from "../utils/auth.js";
 import {videoException} from "../utils/httpExceptions.js";
 import {getAllVideos, modelMap} from "../services/getAllVideosService.js";
-import {pageLimitSchema} from "../schemas/pageLimitSchema.js";
-import {videosListResponse} from "../responses/videosListResponse.js";
 import {videoIdSchema} from "../schemas/videoIdSchema.js";
 import {successResponse} from "../responses/successResponse.js";
 
 export const watchLaterRouter = Router();
 
 watchLaterRouter.get('/all', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { page, limit } = pageLimitSchema.parse(req.query)
-    const currentUserId = req.user!.id
-
-    const {videos, total} = await getAllVideos(modelMap.watchLater, currentUserId, page, limit)
-
-    return videosListResponse(res, videos, total, page, limit)
+    await getAllVideos(req, res, modelMap.watchLater)
 }))
 
 watchLaterRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request, res: Response) => {

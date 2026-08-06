@@ -5,19 +5,12 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import {getUser} from "../utils/auth.js";
 import {videoException} from "../utils/httpExceptions.js";
 import {getAllVideos, modelMap} from "../services/getAllVideosService.js";
-import {videosListResponse} from "../responses/videosListResponse.js";
-import {pageLimitSchema} from "../schemas/pageLimitSchema.js";
 import {videoIdSchema} from "../schemas/videoIdSchema.js";
 
 export const likesRouter = Router();
 
 likesRouter.get('/all', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    const { page, limit } = pageLimitSchema.parse(req.query)
-    const currentUserId = req.user!.id
-
-    const {videos, total} = await getAllVideos(modelMap.like, currentUserId, page, limit)
-
-    return videosListResponse(res, videos, total, page, limit )
+    await getAllVideos(req, res, modelMap.like)
 }))
 
 likesRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
