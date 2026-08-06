@@ -16,7 +16,7 @@ export const getAllVideos = async (
 ) => {
     const skip: number = getSkip(page, limit)
 
-    const [watchLaterItems, total] = await Promise.all([
+    const [videoItems, total] = await Promise.all([
        model.findMany({
             where: {
                 userId: userId,
@@ -33,7 +33,7 @@ export const getAllVideos = async (
         model.count({where: {userId: userId}})
     ])
 
-    const formattedVideos = watchLaterItems.map((item: any) => {
+    const formattedVideos = videoItems.map((item: any) => {
         const video = item.video
         return {
             ...video,
