@@ -7,6 +7,7 @@ import {getSkip} from "../composables/useGetSkip.js";
 import {getUser} from "../utils/auth.js";
 import {videoForListSelect} from "../selects/videoForListSelect.js";
 import {successResponse} from "../responses/successResponse.js";
+import {emptyName} from "../utils/httpExceptions.js";
 
 export const searchRouter = Router();
 
@@ -110,9 +111,7 @@ searchRouter.post('/set_history', getUser(), asyncHandler(async (req: Request, r
     const currentUser = req.user!
 
     const formattedSearch = search.trim()
-    if (!formattedSearch?.length) {
-        return successResponse(res, false)
-    }
+    if (!formattedSearch?.length) throw emptyName
 
     let history: string[] = []
     if (currentUser?.searchHistory) {

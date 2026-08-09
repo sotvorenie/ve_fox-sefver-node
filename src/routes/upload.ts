@@ -95,7 +95,7 @@ uploadRouter.post(
                 }
             })
 
-            res.json(newVideo)
+            res.status(201).json(newVideo)
         } catch (err) {
             if (targetVideoPath) await fs.unlink(targetVideoPath).catch()
             if (targetPreviewPath) await fs.unlink(targetPreviewPath).catch()

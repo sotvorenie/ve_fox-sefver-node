@@ -9,7 +9,6 @@ import {channelForListOrUserSelect} from "../selects/channelForListOrUserSelect.
 import {channelIdSchema} from "../schemas/channelIdSchema.js";
 import {videosListResponse} from "../responses/videosListResponse.js";
 import {pageLimitSchema} from "../schemas/pageLimitSchema.js";
-import {successResponse} from "../responses/successResponse.js";
 import {getSkip} from "../composables/useGetSkip.js";
 import {videoForListSelect} from "../selects/videoForListSelect.js";
 
@@ -126,7 +125,9 @@ channelRouter.get('/:channel_id/has_sections', asyncHandler(async (req: Request,
         take: 1,
     })
 
-    return successResponse(res, count > 0)
+    res.json({
+        hasSections: count > 0
+    })
 }))
 
 const getChannelVideosQuerySchema = pageLimitSchema.extend({

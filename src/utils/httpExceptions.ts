@@ -41,3 +41,6 @@ export const photoFormatException = HttpError(400, "Неподдерживаем
 // комментарии
 export const noCommentException = HttpError(404, "Комментарий не найден");
 export const notMyCommentException = HttpError(403, "Вы не можете редактировать чужой комментарий");
+
+// пустое значение имени
+export const emptyName = HttpError(400, "Пустое значение входного названия");

@@ -119,7 +119,7 @@ userRouter.post(
                 }
             }
 
-            res.json({
+            res.status(201).json({
                 newAvatarUrl: newAvatarUrl,
             })
         } catch (err) {
