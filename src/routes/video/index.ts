@@ -1,53 +1,28 @@
 import { Router, type Request, type Response } from 'express';
-import { z } from 'zod';
-import {db} from "../db.js";
+import {db} from "@/db.js";
 
-import { asyncHandler } from '../utils/asyncHandler.js';
-import {getSkip} from "../composables/useGetSkip.js";
-import {getUser} from "../utils/auth.js";
-import {videoException} from "../utils/httpExceptions.js";
-import {pageLimitSchema} from "../schemas/pageLimitSchema.js";
-import {videoForListSelect} from "../selects/videoForListSelect.js";
-import {videosListResponse} from "../responses/videosListResponse.js";
-import {videoIdSchema} from "../schemas/videoIdSchema.js";
+import {getSkip} from "@composables/useGetSkip.js";
+
+import {asyncHandler} from "@utils/asyncHandler.js";
+import {getUser} from "@utils/auth.js";
+import {videoException} from "@utils/httpExceptions.js";
+
+import {seedSchema} from "@routes/video/schemas.js";
+import {addVideoToHistory} from "@routes/video/services.js";
+import {adminVideosRouter} from "@routes/video/admin.js";
+
+import {pageLimitSchema} from "@schemas/pageLimitSchema.js";
+import {sectionIdSchema} from "@schemas/sectionIdSchema.js";
+import {videoIdSchema} from "@schemas/videoIdSchema.js";
+
+import {videoForListSelect} from "@selects/videoForListSelect.js";
+
+import {videosListResponse} from "@responses/videosListResponse.js";
 
 export const videosRouter = Router();
 
-const pageLimitSeedSchema = pageLimitSchema.extend({
-    seed: z.string().optional().default('0.5').transform(Number),
-})
-
-const addVideoToHistory = async (userId: number, videoId: number) => {
-    const historyEntry = await db.history.findUnique({
-        where: { userId_videoId: { userId, videoId } }
-    })
-
-    if (historyEntry) {
-        await db.history.update({
-            where: { id: historyEntry.id },
-            data: { date: new Date() }
-        })
-    } else {
-        await db.history.create({
-            data: { userId, videoId }
-        })
-
-        const total = await db.history.count({ where: { userId } })
-        if (total > 100) {
-            const oldest = await db.history.findFirst({
-                where: { userId },
-                orderBy: { date: 'asc' },
-                select: { id: true }
-            })
-            if (oldest) {
-                await db.history.delete({ where: { id: oldest.id } })
-            }
-        }
-    }
-}
-
 videosRouter.get('/all', getUser(false), asyncHandler(async (req: Request, res: Response) => {
-    const { page, limit, seed } = pageLimitSeedSchema.parse(req.query)
+    const { page, limit, seed } = pageLimitSchema.extend(seedSchema.shape).parse(req.query)
     const currentUserId = req.user?.id
 
     const skip: number = getSkip(page, limit)
@@ -167,11 +142,8 @@ videosRouter.get('/:video_id', getUser(false), asyncHandler(async (req: Request,
     res.json(video)
 }))
 
-const getAllVideosFromSectionParamsSchema = z.object({
-    section_id: z.string().transform(Number),
-})
 videosRouter.get('/section/:section_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
-    const { section_id: sectionId } = getAllVideosFromSectionParamsSchema.parse(req.params)
+    const { section_id: sectionId } = sectionIdSchema.parse(req.params)
     const { page, limit } = pageLimitSchema.parse(req.query)
     const currentUserId = req.user?.id
 
@@ -200,7 +172,7 @@ videosRouter.get('/section/:section_id', getUser(false), asyncHandler(async (req
 
 videosRouter.get('/recommended/:video_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
     const { video_id: videoId } = videoIdSchema.parse(req.params)
-    const { page, limit, seed } = pageLimitSeedSchema.parse(req.query)
+    const { page, limit, seed } = pageLimitSchema.extend(seedSchema.shape).parse(req.query)
     const currentUserId = req.user?.id
 
     const video = await db.video.findUnique({
@@ -320,3 +292,5 @@ videosRouter.get('/recommended/:video_id', getUser(false), asyncHandler(async (r
 
     return videosListResponse(res, formattedVideos, total, page, limit)
 }))
+
+videosRouter.use('/admin', adminVideosRouter)

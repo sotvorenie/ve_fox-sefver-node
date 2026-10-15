@@ -140,4 +140,4 @@ Do not log:
 - OAuth tokens
 - full database URLs
 - env var values
-- pre-signed upload URLs
+- pre-signed index URLs

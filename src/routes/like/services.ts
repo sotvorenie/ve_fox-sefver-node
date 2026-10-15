@@ -1,29 +1,26 @@
-import { Router, type Request, type Response } from 'express';
-import {db} from "../db.js";
+import { type Request, type Response } from 'express';
+import {db} from "@/db.js";
 
-import { asyncHandler } from '../utils/asyncHandler.js';
-import {getUser} from "../utils/auth.js";
-import {videoException} from "../utils/httpExceptions.js";
-import {getAllVideos, modelMap} from "../services/getAllVideosService.js";
-import {videoIdSchema} from "../schemas/videoIdSchema.js";
+import {videoException} from "@utils/httpExceptions.js";
 
-export const likesRouter = Router();
+import {videoIdSchema} from "@schemas/videoIdSchema.js";
 
-likesRouter.get('/all', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    await getAllVideos(req, res, modelMap.like)
-}))
+import {successResponse} from "@responses/successResponse.js";
 
-likesRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
+export const likeVideo = async (
+    req: Request, 
+    res: Response,
+    userId: number,
+) => {
     const { video_id: videoId } = videoIdSchema.parse(req.params)
-    const currentUserId = req.user!.id
-
+    
     const video = await db.video.findUnique({where: {id: videoId}})
     if (!video) throw videoException
 
     const existingLike = await db.like.findUnique({
         where: {
             userId_videoId: {
-                userId: currentUserId,
+                userId: userId,
                 videoId
             }
         }
@@ -36,7 +33,7 @@ likesRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request, res:
             await tx.like.delete({
                 where: {
                     userId_videoId: {
-                        userId: currentUserId,
+                        userId: userId,
                         videoId
                     }
                 }
@@ -52,7 +49,7 @@ likesRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request, res:
         } else {
             await tx.like.create({
                 data: {
-                    userId: currentUserId,
+                    userId: userId,
                     videoId,
                 }
             })
@@ -68,7 +65,5 @@ likesRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request, res:
         }
     })
 
-    res.json({
-        isLiked: isLiked
-    })
-}))
+    successResponse(res)
+}

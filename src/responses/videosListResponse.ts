@@ -1,5 +1,6 @@
 import { type Response } from 'express';
-import {getSkip} from "../composables/useGetSkip.js";
+
+import {getSkip} from "@composables/useGetSkip.js";
 
 export const videosListResponse = (
     res: Response,

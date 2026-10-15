@@ -1,9 +1,11 @@
 import { type Request, type Response } from 'express';
-import {db} from "../db.js";
+import {db} from "@/db.js";
 
-import {getSkip} from "../composables/useGetSkip.js";
-import {videoForListSelect} from "../selects/videoForListSelect.js";
-import {pageLimitSchema} from "../schemas/pageLimitSchema.js";
+import {getSkip} from "@composables/useGetSkip.js";
+
+import {pageLimitSchema} from "@schemas/pageLimitSchema.js";
+
+import {videoForListSelect} from "@selects/videoForListSelect.js";
 
 export const modelMap = {
     watchLater: db.watchLater,
@@ -15,27 +17,27 @@ export const getAllVideos = async (
     req: Request,
     res: Response,
     model: any,
+    userId: number,
 ) => {
     const { page, limit } = pageLimitSchema.parse(req.query)
-    const currentUserId = req.user!.id
     
     const skip: number = getSkip(page, limit)
 
     const [videoItems, total] = await Promise.all([
        model.findMany({
             where: {
-                userId: currentUserId,
+                userId: userId,
             },
             orderBy: {date: 'desc'},
             skip,
             take: limit,
             select: {
                 video: {
-                    select: videoForListSelect(currentUserId)
+                    select: videoForListSelect(userId)
                 }
             }
         }),
-        model.count({where: {userId: currentUserId}})
+        model.count({where: {userId: userId}})
     ])
 
     const formattedVideos = videoItems.map((item: any) => {

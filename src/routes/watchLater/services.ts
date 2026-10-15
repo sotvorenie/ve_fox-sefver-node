@@ -1,22 +1,18 @@
-import { Router, type Request, type Response } from 'express';
-import {db} from "../db.js";
+import { type Request, type Response } from 'express';
+import {db} from "@/db.js";
 
-import { asyncHandler } from '../utils/asyncHandler.js';
-import {getUser} from "../utils/auth.js";
-import {videoException} from "../utils/httpExceptions.js";
-import {getAllVideos, modelMap} from "../services/getAllVideosService.js";
-import {videoIdSchema} from "../schemas/videoIdSchema.js";
-import {successResponse} from "../responses/successResponse.js";
+import {videoException} from "@utils/httpExceptions.js";
 
-export const watchLaterRouter = Router();
+import {videoIdSchema} from "@schemas/videoIdSchema.js";
 
-watchLaterRouter.get('/all', getUser(), asyncHandler(async (req: Request, res: Response) => {
-    await getAllVideos(req, res, modelMap.watchLater)
-}))
+import {successResponse} from "@responses/successResponse.js";
 
-watchLaterRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
+export const addToWatchLater = async (
+    req: Request,
+    res: Response,
+    userId: number,
+) => {
     const { video_id: videoId } = videoIdSchema.parse(req.params)
-    const currentUserId = req.user!.id
 
     const video = await db.video.findUnique({
         where: {
@@ -28,7 +24,7 @@ watchLaterRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request,
     const existingWatchLater = await db.watchLater.findUnique({
         where: {
             userId_videoId: {
-                userId: currentUserId,
+                userId: userId,
                 videoId
             }
         },
@@ -49,18 +45,21 @@ watchLaterRouter.post('/:video_id', getUser(), asyncHandler(async (req: Request,
     } else {
         await db.watchLater.create({
             data: {
-                userId: currentUserId,
+                userId: userId,
                 videoId,
             }
         })
     }
 
     return successResponse(res)
-}))
+}
 
-watchLaterRouter.delete('/delete/:video_id', getUser(), asyncHandler(async (req: Request, res: Response) => {
+export const deleteFromWatchLater = async (
+    req: Request,
+    res: Response,
+    userId: number,
+) => {
     const { video_id: videoId } = videoIdSchema.parse(req.params)
-    const currentUserId = req.user!.id
 
     const video = await db.video.findUnique({
         where: {
@@ -72,11 +71,11 @@ watchLaterRouter.delete('/delete/:video_id', getUser(), asyncHandler(async (req:
     await db.watchLater.delete({
         where: {
             userId_videoId: {
-                userId: currentUserId,
+                userId: userId,
                 videoId
             }
         }
     })
 
     return successResponse(res)
-}))
+}

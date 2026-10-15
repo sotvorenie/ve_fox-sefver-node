@@ -1,11 +1,13 @@
 export class AppError extends Error {
     status: number
     detail: string
+    code?: string | undefined
 
-    constructor(status: number, detail: string) {
+    constructor(status: number, detail: string, code?: string) {
         super(detail);
         this.status = status;
         this.detail = detail;
+        this.code = code;
         this.name = 'AppError';
     }
 }
@@ -15,6 +17,9 @@ export const HttpError = (status: number, detail: string) => {
 
 // база данных
 export const dbException = HttpError(500, "Ошибка БД");
+
+// signal
+export const abortedException = HttpError(408, "Запрос отменен");
 
 // авторизация и токен
 export const jwtException = HttpError(401, "Не удалось валидировать токен");
@@ -35,6 +40,7 @@ export const videoException = HttpError(404, "Видео не найдено");
 
 // загрузка видео и фото
 export const uploadedVideoException = HttpError(400, "Данные видео некорректны");
+export const uploadedPhotoException = HttpError(400, "Данные фото некорректны");
 export const videoFormatException = HttpError(400, "Неподдерживаемый формат видео");
 export const photoFormatException = HttpError(400, "Неподдерживаемый формат фото");
 

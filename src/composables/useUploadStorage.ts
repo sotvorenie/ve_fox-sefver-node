@@ -2,7 +2,7 @@ import multer from 'multer';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 
-import { TEMPORARY_DIRECTORY } from '../config.js';
+import { TEMPORARY_DIRECTORY } from '@/config.js';
 
 export const uploadStorage = multer.diskStorage({
     destination: async (_, __, cb) => {

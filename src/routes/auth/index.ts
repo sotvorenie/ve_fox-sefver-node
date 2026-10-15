@@ -1,11 +1,11 @@
 import { Router, type Request, type Response } from 'express';
 import bcrypt from 'bcryptjs';
 import {z} from "zod";
-import {db} from "../db.js";
+import {db} from "@/db.js";
 
-import { asyncHandler } from '../utils/asyncHandler.js';
-import {registrationException, authException} from "../utils/httpExceptions.js";
-import {createJWTToken, getUser} from "../utils/auth.js";
+import { asyncHandler } from '@utils/asyncHandler.js';
+import {registrationException, authException} from "@utils/httpExceptions.js";
+import {createJWTToken, getUser} from "@utils/auth.js";
 
 export const authRouter = Router();
 
