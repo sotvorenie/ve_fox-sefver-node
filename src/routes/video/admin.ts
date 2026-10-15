@@ -10,7 +10,6 @@ import {videoConstants} from "@routes/video/constants.js";
 
 import {deleteFile} from "@services/deleteFile.js";
 
-import {urlSchema} from "@schemas/urlSchema.js";
 import {videoIdSchema} from "@schemas/videoIdSchema.js";
 import {nameSchema} from "@schemas/nameSchema.js";
 import {channelIdSchema} from "@schemas/channelIdSchema.js";
@@ -24,12 +23,6 @@ adminVideosRouter.patch('/preview_path/:video_id', getAdmin(), asyncHandler(asyn
     const { path } = pathSchema.parse(req.body)
 
     await updateVideo(req, res, videoConstants.previewPath(path))
-}))
-
-adminVideosRouter.patch('/preview_url/:video_id', getAdmin(), asyncHandler(async (req: Request, res: Response) => {
-    const { url } = urlSchema.parse(req.body)
-
-    await updateVideo(req, res, videoConstants.previewUrl(url))
 }))
 
 adminVideosRouter.patch('/views/:video_id', getAdmin(), asyncHandler(async (req: Request, res: Response) => {
