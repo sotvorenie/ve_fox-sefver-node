@@ -140,7 +140,7 @@ export const uploadFile = async (
     } catch (err) {
         if (targetPath) await fs.unlink(targetPath).catch()
 
-        await fs.unlink(files?.preview?.[0]?.path ?? '').catch()
+        await fs.unlink(files?.[type.title]?.[0]?.path ?? '').catch()
 
         throw err
     }

@@ -34,6 +34,7 @@ export const duplicationPasswordException = HttpError(400, "Новый паро�
 export const channelException = HttpError(404, "Канал не найден");
 export const sectionException = HttpError(400, "Данный плейлист не принадлежит каналу");
 export const duplicationSectionException = HttpError(400, "Плейлист с таким названием уже существует");
+export const duplicationChannelException = HttpError(400, "Канал с таким названием уже существует");
 
 // видео
 export const videoException = HttpError(404, "Видео не найдено");

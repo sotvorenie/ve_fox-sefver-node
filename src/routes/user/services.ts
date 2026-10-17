@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import {db} from "@/db.js";
 
-import {ALLOWED_PHOTO_SUFFIX, AVATARS_DIRECTORY} from "@/config.js";
+import {ALLOWED_PHOTO_SUFFIX, USERS_AVATARS_DIRECTORY} from "@/config.js";
 
 import {createUrl} from "@composables/useCreateUrl.js";
 
@@ -102,9 +102,9 @@ export const uploadAvatar = async (
     let targetAvatarPath: string | null = null
 
     try {
-        await fs.mkdir(AVATARS_DIRECTORY, { recursive: true })
+        await fs.mkdir(USERS_AVATARS_DIRECTORY, { recursive: true })
 
-        targetAvatarPath = path.join(AVATARS_DIRECTORY, `${user.id}_${Date.now()}${avatarSuffix}`)
+        targetAvatarPath = path.join(USERS_AVATARS_DIRECTORY, `${user.id}_${Date.now()}${avatarSuffix}`)
         await fs.rename(avatarFile.path, targetAvatarPath)
 
         const newAvatarUrl: string = createUrl(targetAvatarPath)
