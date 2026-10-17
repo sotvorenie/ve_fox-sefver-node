@@ -107,11 +107,17 @@ export const uploadFile = async (
     let targetPath: string | null = null
 
     try {
+        req.checkAborted()
+
         const previewsDirectory = path.join(VIDEOS_DIRECTORY, 'previews')
         await fs.mkdir(previewsDirectory, { recursive: true })
 
+        req.checkAborted()
+
         targetPath = path.join(previewsDirectory, `${Date.now()}${suffix}`)
         await fs.rename(file.path, targetPath)
+
+        req.checkAborted()
 
         const oldUrl = await db.video.findUnique({
             where: {
