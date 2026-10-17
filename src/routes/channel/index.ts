@@ -9,7 +9,7 @@ import {channelException, duplicationSectionException} from "@utils/httpExceptio
 import {getUser} from "@utils/auth.js";
 
 import {adminChannelRouter} from "@routes/channel/admin.js";
-import {getChannel, getChannelVideos} from "@routes/channel/services.js";
+import {getChannelVideos} from "@routes/channel/services.js";
 import {getChannelVideosQuerySchema, sectionNameSchema} from "@routes/channel/schemas.js";
 
 import {channelIdSchema} from "@schemas/channelIdSchema.js";
@@ -20,6 +20,7 @@ import {channelForListOrUserSelect} from "@selects/channelForListOrUserSelect.js
 import {videoForListSelect} from "@selects/videoForListSelect.js";
 
 import {videosListResponse} from "@responses/videosListResponse.js";
+import {isAdminSchema} from "@schemas/isAdminSchema.js";
 
 export const channelRouter = Router();
 
@@ -38,7 +39,37 @@ channelRouter.get('/all', asyncHandler(async (_: Request, res: Response) => {
 }))
 
 channelRouter.get('/:channel_id', getUser(false), asyncHandler(async (req: Request, res: Response) => {
-    await getChannel(req, res)
+    const { channel_id: channelId } = channelIdSchema.parse(req.params)
+    const { is_admin: isAdmin } = isAdminSchema.parse(req.query)
+    const currentUserId = req.user?.id
+
+    const [channel, newVideosData, popularVideosData] = await Promise.all([
+        db.channel.findUnique({
+            where: {
+                id: channelId
+            },
+            select: {
+                ...channelForListOrUserSelect,
+                createdAt: true,
+            }
+        }),
+        (!isAdmin
+                ? getChannelVideos(channelId, 1, 21, true, false, currentUserId)
+                : Promise.resolve(null)
+        ),
+        (!isAdmin
+                ? getChannelVideos(channelId, 1, 8, false, true, currentUserId)
+                : Promise.resolve(null)
+        )
+    ])
+
+    if (!channel) throw channelException
+
+    res.json({
+        channel,
+        newVideos: newVideosData?.videos,
+        popularVideos: popularVideosData?.videos,
+    })
 }))
 
 channelRouter.get('/:channel_id/sections', asyncHandler(async (req: Request, res: Response) => {

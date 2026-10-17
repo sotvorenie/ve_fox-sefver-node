@@ -1,42 +1,22 @@
 import { Router, type Request, type Response } from 'express';
 import bcrypt from 'bcryptjs';
-import {z} from "zod";
 import {db} from "@/db.js";
 
 import { asyncHandler } from '@utils/asyncHandler.js';
 import {registrationException, authException} from "@utils/httpExceptions.js";
-import {createJWTToken, getUser} from "@utils/auth.js";
+import {getUser} from "@utils/auth.js";
+
+import {loginPasswordSchema} from "@routes/auth/schemas.js";
+import {authResponse} from "@routes/auth/services.js";
+
+import {nameSchema} from "@schemas/nameSchema.js";
 
 export const authRouter = Router();
 
 const productName: string = process.env.PRODUCT_NAME as string
 
-const authBaseScheme = z.object({
-    login: z.string(),
-    password: z.string(),
-})
-
-const authResponse = (
-    res: Response,
-    user: { id: number; name: string; password?: string; [key: string]: any },
-) => {
-    const { password, ...userWithoutPassword } = user
-
-    return res.status(201).json({
-        user: {
-            ...userWithoutPassword,
-            routerMap: '',
-            searchHistory: '',
-        },
-        token: createJWTToken(user.id),
-    })
-}
-
-const registerBodySchema = authBaseScheme.extend({
-    name: z.string(),
-})
 authRouter.post('/register', asyncHandler(async (req: Request, res: Response) => {
-    const { login, password, name } = registerBodySchema.parse(req.body)
+    const { login, password, name } = loginPasswordSchema.extend(nameSchema.shape).parse(req.body)
 
     const existingUser = await db.user.findUnique({where: {login}})
     if (existingUser) throw registrationException
@@ -57,7 +37,7 @@ authRouter.post('/register', asyncHandler(async (req: Request, res: Response) =>
 }))
 
 authRouter.post('/login', asyncHandler(async (req: Request, res: Response) => {
-    const { login, password} = authBaseScheme.parse(req.body)
+    const { login, password} = loginPasswordSchema.parse(req.body)
 
     const user = await db.user.findUnique({where: {login}})
     if (!user) throw authException
